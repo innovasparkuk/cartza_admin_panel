@@ -1,129 +1,173 @@
+// main.dart
+import 'package:ecomadminpanel/admin_dashboard.dart';
+import 'package:ecomadminpanel/admin_provider.dart';
+import 'package:ecomadminpanel/product_management.dart';
+import 'package:ecomadminpanel/stock_management.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dashboard/dashboard_page.dart';
+import 'package:provider/provider.dart';
+
 
 void main() {
-  runApp(ShopEaseAdminApp());
+  runApp(const MyApp());
 }
 
-class ShopEaseAdminApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ShopEase Admin',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: false,
-
-        primaryColor: Color(0xFF111111),
-
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Color(0xFF111111),
-          primary: Color(0xFF111111),
-          secondary: Color(0xFF00C853),
-          background: Color(0xFFF4F6F8),
-          surface: Colors.white,
-          onPrimary: Colors.white,
-          onSecondary: Colors.white,
-          onBackground: Color(0xFF212121),
-          onSurface: Color(0xFF212121),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AdminProvider()),
+      ],
+      child: MaterialApp(
+        title: 'Admin Panel',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+          useMaterial3: true,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-
-        scaffoldBackgroundColor: Color(0xFFF4F6F8),
-
-        appBarTheme: AppBarTheme(
-          backgroundColor: Color(0xFF111111),
-          elevation: 0,
-          iconTheme: IconThemeData(color: Colors.white),
-          titleTextStyle: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-
-        cardTheme: CardThemeData(
-          color: Colors.white,
-          elevation: 0,
-          margin: EdgeInsets.all(12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-          shadowColor: Colors.black12,
-        ),
-
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF00C853),
-            foregroundColor: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            textStyle: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: Color(0xFF00C853),
-          ),
-        ),
-
-        iconTheme: IconThemeData(
-          color: Color(0xFF212121),
-          size: 22,
-        ),
-
-        dividerTheme: DividerThemeData(
-          color: Colors.grey[300],
-          thickness: 1,
-        ),
-
-        textTheme: TextTheme(
-          headlineMedium: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF212121),
-          ),
-          titleLarge: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF212121),
-          ),
-          bodyMedium: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF212121),
-          ),
-          bodySmall: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
-
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey[300]!),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey[300]!),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Color(0xFF00C853),
-              width: 2,
-            ),
-          ),
-        ),
+        home: const ResponsiveLayout(child: AdminDashboard()),
       ),
-      home: DashboardPage(),
+    );
+  }
+}
+
+// Responsive Layout Wrapper
+class ResponsiveLayout extends StatelessWidget {
+  final Widget child;
+  const ResponsiveLayout({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 600) {
+          return MobileScaffold(child: child);
+        } else if (constraints.maxWidth < 1200) {
+          return TabletScaffold(child: child);
+        } else {
+          return DesktopScaffold(child: child);
+        }
+      },
+    );
+  }
+}
+
+class MobileScaffold extends StatelessWidget {
+  final Widget child;
+  const MobileScaffold({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Admin Panel'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
+        ],
+      ),
+      drawer: const AppDrawer(),
+      body: SafeArea(child: child),
+    );
+  }
+}
+
+class TabletScaffold extends StatelessWidget {
+  final Widget child;
+  const TabletScaffold({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Admin Panel'),
+      ),
+      drawer: const AppDrawer(),
+      body: SafeArea(child: child),
+    );
+  }
+}
+
+class DesktopScaffold extends StatelessWidget {
+  final Widget child;
+  const DesktopScaffold({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          const Flexible(
+            flex: 1,
+            child: AppDrawer(),
+          ),
+          Flexible(
+            flex: 5,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: child,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AppDrawer extends StatelessWidget {
+  const AppDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Color(0xFF4CAF50),
+            ),
+            child: Text(
+              'Admin Panel',
+              style: TextStyle(color: Colors.white, fontSize: 24),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.inventory),
+            title: const Text('Product Management'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProductManagementPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.warehouse),
+            title: const Text('Stock Management'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const StockManagementPage(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
