@@ -1,11 +1,19 @@
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class HuggingFaceAI {
-  static const String _apiKey = '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';
-  static const String _model = 'https://api-inference.huggingface.co/models/gpt2';
+  static const String _model =
+      'https://api-inference.huggingface.co/models/gpt2';
+
+  // Token runtime par pass hoga
+  static const String _apiKey =
+  String.fromEnvironment('HF_TOKEN', defaultValue: '');
+
   Future<String> generate(String prompt) async {
+    if (_apiKey.isEmpty) {
+      return _fallbackResponse();
+    }
+
     try {
       final res = await http
           .post(
@@ -25,9 +33,6 @@ class HuggingFaceAI {
       )
           .timeout(const Duration(seconds: 60));
 
-      print('HF Response code: ${res.statusCode}');
-      print('HF Response body: ${res.body}');
-
       if (res.statusCode != 200) {
         throw Exception('HF API error');
       }
@@ -38,29 +43,28 @@ class HuggingFaceAI {
       }
 
       return 'No response from AI';
-    } catch (e) {
-      print('HF Exception: $e');
-      return '''
-## AI Service Temporarily Unavailable
-
-Below are **standard ecommerce recommendations** based on best practices:
-
-### Pricing
-- Keep pricing competitive within your category
-- Avoid frequent discounts; use time-limited offers
-
-### Inventory
-- Maintain stock for 20–30 days for fast-moving products
-- Reduce exposure on slow-moving items
-
-### Marketing
-- Focus on performance ads and remarketing
-- Highlight value propositions clearly
-
-### Next Actions
-- Retry AI insights later for deeper analysis
-''';
+    } catch (_) {
+      return _fallbackResponse();
     }
+  }
+
+  String _fallbackResponse() {
+    return '''
+AI service is unavailable.
+
+Here are general ecommerce best practices:
+
+Pricing:
+Keep prices competitive and avoid over discounting.
+
+Inventory:
+Maintain 20 to 30 days of stock for fast movers.
+
+Marketing:
+Focus on performance ads and remarketing.
+
+Retry later for AI powered insights.
+''';
   }
 
   Future<String> productAnalysis({
@@ -70,53 +74,28 @@ Below are **standard ecommerce recommendations** based on best practices:
     required int stock,
   }) {
     return generate("""
-You are an experienced ecommerce business analyst.
+Analyze the following product and give business recommendations.
 
-Analyze the product below and provide actionable business recommendations.
-
-Product Name: $name
+Name: $name
 Category: $category
 Price: $price
-Stock Level: $stock
-
-Respond in sections:
-- Pricing Recommendation
-- Demand Outlook
-- Inventory Strategy
-- Marketing Focus
-- Profit Optimization
+Stock: $stock
 """);
   }
 
   Future<String> salesAnalysis() {
-    return generate("""
-You are a senior ecommerce sales analyst.
-
-Analyze ecommerce sales performance and suggest improvements with actionable insights.
-""");
+    return generate("Analyze ecommerce sales and suggest improvements.");
   }
 
   Future<String> marketingPlan() {
-    return generate("""
-You are a digital marketing strategist.
-
-Create a professional ecommerce marketing plan for the next 60 days.
-""");
+    return generate("Create a 60 day ecommerce marketing plan.");
   }
 
   Future<String> customerInsights() {
-    return generate("""
-You are a CRM and retention expert.
-
-Provide actionable customer behavior insights for ecommerce growth.
-""");
+    return generate("Provide ecommerce customer retention insights.");
   }
 
   Future<String> inventoryPlan() {
-    return generate("""
-You are a supply chain optimization expert.
-
-Suggest inventory optimization strategies for ecommerce operations.
-""");
+    return generate("Suggest inventory optimization strategies.");
   }
 }

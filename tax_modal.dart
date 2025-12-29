@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/models/tax.dart';
+import 'tax.dart';
 
 class TaxModal extends StatefulWidget {
   final Tax? tax;

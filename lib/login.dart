@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:untitled6/forgetpassword.dart';
-import 'package:untitled6/main.dart';
-import 'package:untitled6/signup.dart';
-import 'package:untitled6/userdashboard.dart';
+import 'forgetpassword.dart';
+import 'signup.dart';
+import 'userdashboard.dart';
+import 'main.dart';
 
-class login extends StatefulWidget {
-  State<login> createState() => _login();
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _login extends State<login> {
-  var email = TextEditingController();
-  var password = TextEditingController();
+class _LoginPageState extends State<LoginPage> {
+  final email = TextEditingController();
+  final password = TextEditingController();
 
-  // Dummy credentials
   final String adminEmail = "admin@gmail.com";
   final String adminPassword = "admin123";
 
@@ -23,187 +25,109 @@ class _login extends State<login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 350,
-              width: 500,
-              decoration: BoxDecoration(
-                color: Color(0xFFFFFFFF),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Color(0xFFFF6F00),
-                  width: 4,
-                ),
+        child: Container(
+          height: 350,
+          width: 500,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.orange, width: 3),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _inputField(
+                controller: email,
+                hint: "Email",
+                icon: Icons.email_outlined,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              _inputField(
+                controller: password,
+                hint: "Password",
+                icon: Icons.lock_outline,
+                obscure: true,
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: _login,
+                child: const Text("Login"),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: TextField(
-                      controller: email,
-                      style: const TextStyle(
-                        color: Color(0xFF212121),
-                        fontFamily: 'Roboto',
-                      ),
-                      cursorColor: Color(0xFF4CAF50),
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(
-                          Icons.email_outlined,
-                          color: Color(0xFFFF6F00),
-                        ),
-                        hintText: "Enter your Email",
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF212121),
-                        ),
-                        filled: true,
-                        fillColor: Color(0xFFFFFFFF),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF4CAF50),
-                            width: 2,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFFF6F00),
-                            width: 2.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: TextField(
-                      controller: password,
-                      obscureText: true,
-                      obscuringCharacter: "*",
-                      style: const TextStyle(
-                        color: Color(0xFF212121),
-                        fontFamily: 'Roboto',
-                      ),
-                      cursorColor: Color(0xFF4CAF50),
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(
-                          Icons.lock_outline,
-                          color: Color(0xFFFF6F00),
-                        ),
-                        hintText: "Password",
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF212121),
-                        ),
-                        filled: true,
-                        fillColor: Color(0xFFFFFFFF),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF4CAF50),
-                            width: 2,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFFF6F00),
-                            width: 2.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF4CAF50),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
+                  TextButton(
                     onPressed: () {
-                      String enteredEmail = email.text.trim();
-                      String enteredPassword = password.text.trim();
-
-                      if (enteredEmail == adminEmail &&
-                          enteredPassword == adminPassword) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyHomePage()),
-                        );
-                      } else if (enteredEmail == userEmail &&
-                          enteredPassword == userPassword) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UserDashboard()),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Email not registered"),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SignupPage(),
+                        ),
+                      );
                     },
-                    child: const Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Roboto',
-                      ),
-                    ),
+                    child: const Text("Sign up"),
                   ),
-                  SizedBox(height: 16,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SignupPage()),
-                          );
-                        },
-                        child: const Text(
-                          "Not Registered? Sign up",
-                          style: TextStyle(
-                            color: Color(0xFF4CAF50),
-                            fontFamily: 'Roboto',
-                          ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ForgotPasswordPage(),
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ForgotPasswordPage()),
-                          );
-                        },
-                        child: const Text(
-                          "Forget Password ?",
-                          style: TextStyle(
-                            color: Color(0xFF4CAF50),
-                            fontFamily: 'Roboto',
-                          ),
-                        ),
-                      ),
-                    ],
+                      );
+                    },
+                    child: const Text("Forgot password"),
                   ),
                 ],
               ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _inputField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    bool obscure = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextField(
+        controller: controller,
+        obscureText: obscure,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon),
+          hintText: hint,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _login() {
+    final e = email.text.trim();
+    final p = password.text.trim();
+
+    if (e == adminEmail && p == adminPassword) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MyHomePage()),
+      );
+    } else if (e == userEmail && p == userPassword) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const UserDashboard()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Invalid credentials")),
+      );
+    }
   }
 }

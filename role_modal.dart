@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/models/role.dart';
-
+import 'role.dart';
 
 class RoleModal extends StatefulWidget {
   final Role? role;

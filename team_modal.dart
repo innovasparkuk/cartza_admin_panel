@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/models/team_member.dart';
+import 'team_member.dart';
 
 class TeamModal extends StatefulWidget {
   final TeamMember? member;
