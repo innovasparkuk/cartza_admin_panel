@@ -1,61 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:shopease_admin/l10n/app_localizations.dart';
 
 class DashboardCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final t = AppLocalizations.of(context)!;
+
     return Row(
       children: [
         _buildCard(
           context: context,
           icon: Icons.people,
-          title: "Total Users",
+          title: t.totalUsers,
           value: "1,234",
-          color: Color(0xFF212121),
-          bgColor: Color(0xFF212121).withOpacity(0.1),
+          color: theme.colorScheme.primary,
           onTap: () {
-            print("Users card clicked");
-           },
+            debugPrint("Users card clicked");
+          },
         ),
 
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
 
         _buildCard(
           context: context,
           icon: Icons.shopping_cart,
-          title: "Total Orders",
+          title: t.totalOrders,
           value: "567",
-          color: Color(0xFFFF6F00),
-          bgColor: Color(0xFFFF6F00).withOpacity(0.1),
+          color: Colors.orange,
           onTap: () {
-            print("Orders card clicked");
+            debugPrint("Orders card clicked");
           },
         ),
 
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
 
         _buildCard(
           context: context,
           icon: Icons.currency_rupee,
-          title: "Total Revenue",
+          title: t.totalRevenue,
           value: "₹89,000",
-          color: Color(0xFF4CAF50),
-          bgColor: Color(0xFF4CAF50).withOpacity(0.1),
+          color: Colors.green,
           onTap: () {
-            print("Revenue card clicked");
+            debugPrint("Revenue card clicked");
           },
         ),
 
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
 
         _buildCard(
           context: context,
           icon: Icons.inventory,
-          title: "Active Products",
+          title: t.activeProducts,
           value: "1,089",
           color: Colors.purple,
-          bgColor: Colors.purple.withOpacity(0.1),
           onTap: () {
-            print("Products card clicked");
+            debugPrint("Products card clicked");
           },
         ),
       ],
@@ -68,63 +68,64 @@ class DashboardCards extends StatelessWidget {
     required String title,
     required String value,
     required Color color,
-    Color? bgColor,
     VoidCallback? onTap,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Expanded(
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
+          padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isDark ? Colors.white10 : Colors.grey.shade200,
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black12,
-                blurRadius: 12,
-                offset: Offset(0, 4),
+                color: isDark ? Colors.black26 : Colors.black12,
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
             ],
-            border: Border.all(color: Colors.grey[200]!, width: 1),
           ),
-          child: Padding(
-            padding: EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: bgColor ?? color.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(icon, size: 20, color: color),
-                    ),
-                  ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                SizedBox(height: 20),
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF212121),
-                  ),
+                child: Icon(icon, size: 22, color: color),
+              ),
+
+              const SizedBox(height: 20),
+
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
                 ),
-                SizedBox(height: 8),
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16,
-                  ),
+              ),
+
+              const SizedBox(height: 8),
+
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

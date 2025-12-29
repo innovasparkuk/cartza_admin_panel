@@ -6,7 +6,6 @@ class SalesData {
 
   SalesData(this.label, this.value, {this.category, this.percentageChange = 0.0});
 
-  // Factory method to create sample data
   factory SalesData.fromJson(Map<String, dynamic> json) {
     return SalesData(
       json['label'],
@@ -16,8 +15,7 @@ class SalesData {
     );
   }
 
-  // Sample data for testing
-  static List<SalesData> getWeeklySales() {
+ static List<SalesData> getWeeklySales() {
     return [
       SalesData('Mon', 42000),
       SalesData('Tue', 38000),

@@ -1,180 +1,251 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dashboard_cards.dart';
 import 'dashboard_charts.dart';
 import 'sidebar.dart';
+import 'package:shopease_admin/l10n/app_localizations.dart';
+import 'package:shopease_admin/ai_recommendations/ai_recommendations_page.dart';
+import 'package:shopease_admin/settings/settings_page.dart';
+import 'package:shopease_admin/top_products.dart';
+import 'package:shopease_admin/user_growth_chart.dart';
+import 'package:shopease_admin/promotions/promotions_page.dart';
+import 'package:shopease_admin/cms/cms_page.dart';
+import 'package:shopease_admin/notifications/notifications_page.dart';
 
 class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
+
   @override
-  _DashboardPageState createState() => _DashboardPageState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedMenuIndex = 0;
-  bool _sidebarCollapsed = false;
+
+  final FocusNode _searchFocus = FocusNode();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFE8E6E6),
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final t = AppLocalizations.of(context)!;
 
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Row(
         children: [
-          if (!_sidebarCollapsed) SidebarMenu(
-            onMenuSelected: (index) {
-              setState(() {
-                _selectedMenuIndex = index;
-              });
-            },
+          SidebarMenu(
             selectedIndex: _selectedMenuIndex,
+            onMenuSelected: (index) {
+              setState(() => _selectedMenuIndex = index);
+            },
           ),
-
           Expanded(
-            child: Container(
-              color: Color(0xFFF5F5F5),
-              child: _buildContent(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _getTitle() {
-    switch (_selectedMenuIndex) {
-      case 0:
-        return "Dashboard Overview";
-      case 1:
-        return "Product Management";
-      case 2:
-        return "Order Management";
-      case 3:
-        return "Customer Management";
-      case 4:
-        return "Payment Transactions";
-      case 5:
-        return "Promotions & Coupons";
-      case 6:
-        return "Reviews & Ratings";
-      case 7:
-        return "Reports & Analytics";
-      case 8:
-        return "CMS Management";
-      case 9:
-        return "System Settings";
-      default:
-        return "ShopEase Admin";
-    }
-  }
-
-  Widget _buildContent() {
-    if (_selectedMenuIndex != 0) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Icon(
-            //   Icons.dashboard,
-            //   size: 80,
-            //   color: Color(0xFF212121).withOpacity(0.1),
-            // ),
-            // SizedBox(height: 20),
-            // Text(
-            //   _getTitle(),
-            //   style: TextStyle(
-            //     fontSize: 28,
-            //     fontWeight: FontWeight.bold,
-            //     color: Color(0xFF212121),
-            //   ),
-            // ),
-            // SizedBox(height: 10),
-            // Text(
-            //   "This section is under development",
-            //   style: TextStyle(
-            //     fontSize: 16,
-            //     color: Colors.grey[600],
-            //   ),
-            // ),
-          ],
-        ),
-      );
-    }
-
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-
-          DashboardCards(),
-          SizedBox(height: 30),
-
-          DashboardCharts(),
-          SizedBox(height: 30),
-        ],
-      ),
-    );
-  }
-
-
-  Widget _buildActionButton({
-    required IconData icon,
-    required String label,
-    required Color color,
-  }) {
-    return Container(
-      width: 180,
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-        child: InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[200]!),
-              borderRadius: BorderRadius.circular(12),
-            ),
             child: Column(
               children: [
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, color: color, size: 28),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF212121),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 8),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    "Click to open",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                _buildTopBar(context, isDark, t),
+                Expanded(
+                  child: Container(
+                    color: theme.scaffoldBackgroundColor,
+                    child: _buildContent(t),
                   ),
                 ),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopBar(
+      BuildContext context,
+      bool isDark,
+      AppLocalizations t,
+      ) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      color: theme.colorScheme.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(_searchFocus);
+                  },
+                  child: Container(
+                    height: 42,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceVariant,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.search,
+                          color:
+                          theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            controller: _searchController,
+                            focusNode: _searchFocus,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: t.search,
+                              hintStyle: TextStyle(
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.5),
+                              ),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 24),
+
+              _topIcon(
+                context,
+                icon: Icons.notifications_none,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationsPage(),
+                    ),
+                  );
+                },
+              ),
+
+              const SizedBox(width: 16),
+
+              _topIcon(
+                context,
+                icon: Icons.mail_outline,
+                onTap: () {},
+              ),
+
+              const SizedBox(width: 24),
+
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: isDark
+                    ? const Color(0xFF4CAF50)
+                    : (theme.appBarTheme.iconTheme?.color ??
+                    theme.iconTheme.color ??
+                    theme.colorScheme.primary),
+                child: const Text(
+                  'A',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            t.welcomeAdmin,
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _topIcon(
+      BuildContext context, {
+        required IconData icon,
+        required VoidCallback onTap,
+      }) {
+    final theme = Theme.of(context);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(50),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceVariant,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          icon,
+          color: theme.colorScheme.onSurface.withOpacity(0.7),
         ),
       ),
     );
+  }
+
+  Widget _buildContent(AppLocalizations t) {
+    switch (_selectedMenuIndex) {
+      case 0:
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              DashboardCards(),
+              const SizedBox(height: 24),
+              DashboardCharts(),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(child: UserGrowthChart()),
+                  const SizedBox(width: 20),
+                  Expanded(child: TopProducts()),
+                ],
+              ),
+            ],
+          ),
+        );
+
+      case 4:
+        return const CmsPage();
+
+      case 5:
+        return const NotificationsPage();
+
+      case 6:
+        return PromotionsPage();
+
+      case 9:
+        return const SettingsPage();
+
+      case 10:
+        return AIRecommendationsPage();
+
+      default:
+        return Center(
+          child: Text(
+            t.pageUnderDevelopment,
+            style: TextStyle(
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withOpacity(0.6),
+            ),
+          ),
+        );
+    }
   }
 }
