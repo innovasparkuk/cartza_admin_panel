@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shopease_admin/l10n/app_localizations.dart';  // Updated import
 
+import 'l10n/app_localizations.dart';
 import 'dashboard/dashboard_page.dart';
 import 'theme/theme_provider.dart';
 import 'theme/app_theme.dart';
@@ -31,6 +31,7 @@ class ShopEaseAdminApp extends StatelessWidget {
     final localeProvider = context.watch<LocaleProvider>();
 
     return MaterialApp(
+      title: 'ShopEase Admin',
       debugShowCheckedModeBanner: false,
 
       locale: localeProvider.locale,
@@ -44,11 +45,10 @@ class ShopEaseAdminApp extends StatelessWidget {
 
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: themeProvider.isDark
-          ? ThemeMode.dark
-          : ThemeMode.light,
+      themeMode:
+      themeProvider.isDark ? ThemeMode.dark : ThemeMode.light,
 
-      home: DashboardPage(),
+      home: const DashboardPage(),
     );
   }
 }
