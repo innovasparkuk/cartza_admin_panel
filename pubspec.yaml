@@ -1,0 +1,40 @@
+name: shopease_admin
+description: "ShopEase - E-commerce Admin Panel"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.10.4 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_localizations:
+    sdk: flutter
+
+  provider:
+  intl: any
+  shared_preferences:
+  http:
+  shimmer:
+  animations:
+  flutter_markdown:
+
+  fl_chart:
+  cupertino_icons: ^1.0.8
+  csv: ^6.0.0
+  path_provider: ^2.1.2
+  share_plus: ^10.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/images/
