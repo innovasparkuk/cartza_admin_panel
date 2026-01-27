@@ -13,6 +13,8 @@ class ProductManagementPage extends StatefulWidget {
 }
 
 class _ProductManagementPageState extends State<ProductManagementPage> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -59,97 +61,128 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                   ? ListView.builder(
                 itemCount: provider.products.length,
                 itemBuilder: (_, index) {
-                  final product = provider.products[index];
-                  return _buildMobileCard(product);
+                  return _buildMobileCard(
+                      provider.products[index]);
                 },
               )
-                  : Scrollbar(
-                thumbVisibility: true,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minWidth: MediaQuery.of(context).size.width, // full width
-                      ),
-                    child: DataTable(
-                      headingRowHeight: 56,
-                      dataRowHeight: 56,
-                      columnSpacing: 24,
-                      columns: const [
-                        DataColumn(
-                          label: Text(
-                            'Name',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'Category',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'Price',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'Stock',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'Actions',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                        ),
-                      ],
-                      rows: provider.products.map((product) {
-                        return DataRow(cells: [
-                          DataCell(Text(product.name)),
-                          DataCell(Text(product.category)),
-                          DataCell(Text(
-                              '\$${product.price.toStringAsFixed(2)}')),
-                          DataCell(Text(
-                              product.stockQuantity.toString())),
-                          DataCell(Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit,
-                                    size: 18),
-                                onPressed: () =>
-                                    _showProductForm(
-                                        product: product),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete,
-                                    size: 18, color: Colors.red),
-                                onPressed: () =>
-                                    _confirmDelete(product),
-                              ),
-                            ],
-                          )),
-                        ]);
-                      }).toList(),
+                  : _buildDesktopTable(provider),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopTable(AdminProvider provider) {
+    return Scrollbar(
+      thumbVisibility: true,
+      controller: _scrollController,
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width,
+          ),
+          child: DataTable(
+            headingRowHeight: 56,
+            dataRowHeight: 80,
+            columnSpacing: 24,
+            columns: const [
+              DataColumn(
+                label: Text(
+                  'Image',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Name',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Description',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Category',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Price',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Stock',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Actions',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+            ],
+            rows: provider.products.map((product) {
+              return DataRow(cells: [
+                DataCell(
+                  product.imageUrl.isNotEmpty
+                      ? ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: Image.network(
+                      product.imageUrl,
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                      : const Icon(Icons.image_not_supported,
+                      color: Colors.grey),
+                ),
+                DataCell(Text(product.name)),
+                DataCell(
+                  SizedBox(
+                    width: 220,
+                    child: Text(
+                      product.description.isNotEmpty
+                          ? product.description
+                          : 'No description',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
+                DataCell(Text(product.category)),
+                DataCell(
+                    Text('\$${product.price.toStringAsFixed(2)}')),
+                DataCell(Text(product.stockQuantity.toString())),
+                DataCell(
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, size: 18),
+                        onPressed: () =>
+                            _showProductForm(product: product),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete,
+                            size: 18, color: Colors.red),
+                        onPressed: () => _confirmDelete(product),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-          ],
+              ]);
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -163,11 +196,8 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
             decoration: InputDecoration(
               hintText: 'Search products',
               prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onChanged: (value) {
               provider.filterProducts(value, provider.selectedCategory);
@@ -180,10 +210,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               ? provider.selectedCategory
               : 'All',
           items: provider.categories.map((cat) {
-            return DropdownMenuItem(
-              value: cat,
-              child: Text(cat),
-            );
+            return DropdownMenuItem(value: cat, child: Text(cat));
           }).toList(),
           onChanged: (value) {
             if (value != null) {
@@ -198,14 +225,23 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
   Widget _buildMobileCard(Product product) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: ListTile(
-        contentPadding:
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        leading: product.imageUrl.isNotEmpty
+            ? ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: Image.network(
+            product.imageUrl,
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+          ),
+        )
+            : const Icon(Icons.image),
         title: Text(product.name,
             style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text('${product.category}  |  \$${product.price}'),
+        subtitle: Text(
+            '${product.category} | \$${product.price}\n${product.description}'),
+        isThreeLine: true,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -226,28 +262,17 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
   void _showProductForm({Product? product}) {
     showDialog(
       context: context,
-      builder: (_) => Center(
-        child: Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(16),
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
-            child: ProductForm(
-              product: product,
-              onSave: (p) {
-                final provider = context.read<AdminProvider>();
-                if (product == null) {
-                  provider.addProduct(p, context);
-                } else {
-                  provider.updateProduct(p, context);
-                }
-                Navigator.pop(context);
-              },
-            ),
-            ),
-        ),
+      builder: (_) => ProductForm(
+        product: product,
+        onSave: (p, imageFile) {
+          final provider = context.read<AdminProvider>();
+          if (product == null) {
+            provider.addProduct(p, imageFile, context);
+          } else {
+            provider.updateProduct(p, imageFile, context);
+          }
+          Navigator.pop(context);
+        },
       ),
     );
   }
@@ -265,10 +290,13 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           ),
           TextButton(
             onPressed: () {
-              context.read<AdminProvider>().deleteProduct(product.id, context);
+              context
+                  .read<AdminProvider>()
+                  .deleteProduct(product.id, context);
               Navigator.pop(context);
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child:
+            const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

@@ -18,6 +18,7 @@ dependencies:
   intl: any
   shared_preferences:
   http:
+  image_picker:
   shimmer:
   animations:
   flutter_markdown:

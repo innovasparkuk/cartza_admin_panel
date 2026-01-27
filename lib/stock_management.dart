@@ -381,11 +381,11 @@ class _StockManagementPageState extends State<StockManagementPage> {
       }
     }
 
-    if (updates.isNotEmpty) {
-      provider.bulkUpdateStock(updates);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Stock updated successfully')),
-      );
-    }
+    // if (updates.isNotEmpty) {
+    //   provider.bulkUpdateStock(updates);
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Stock updated successfully')),
+    //   );
+    // }
   }
 }
