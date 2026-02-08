@@ -146,6 +146,12 @@ abstract class AppLocalizations {
   /// **'Sales Trends'**
   String get salesTrends;
 
+  /// No description provided for @analyticsMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get analyticsMenu;
+
   /// No description provided for @last7Days.
   ///
   /// In en, this message translates to:
@@ -295,6 +301,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Orders'**
   String get ordersMenu;
+
+  /// No description provided for @customersMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers'**
+  String get customersMenu;
+
+  /// No description provided for @paymentsMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get paymentsMenu;
+
+  /// No description provided for @reviewsMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviewsMenu;
 
   /// No description provided for @productsMenu.
   ///

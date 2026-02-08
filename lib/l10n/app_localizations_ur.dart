@@ -33,6 +33,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get salesTrends => 'فروخت کے رجحانات';
 
   @override
+  String get analyticsMenu => 'Analytics';
+
+  @override
   String get last7Days => 'آخری 7 دن';
 
   @override
@@ -107,6 +110,15 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get ordersMenu => 'آرڈرز';
+
+  @override
+  String get customersMenu => 'Customers';
+
+  @override
+  String get paymentsMenu => 'Payments';
+
+  @override
+  String get reviewsMenu => 'Reviews';
 
   @override
   String get productsMenu => 'مصنوعات';

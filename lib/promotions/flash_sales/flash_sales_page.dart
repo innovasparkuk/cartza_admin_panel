@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shopease_admin/l10n/app_localizations.dart';
 import 'create_flash_sale_page.dart';
 import 'flash_sale_model.dart';
+import 'package:shopease_admin/flash_sale_provider.dart';
 
 class FlashSalesPage extends StatefulWidget {
   @override
@@ -9,13 +11,20 @@ class FlashSalesPage extends StatefulWidget {
 }
 
 class _FlashSalesPageState extends State<FlashSalesPage> {
-  final List<FlashSale> flashSales = [];
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(
+          () => context.read<FlashSaleProvider>().loadFlashSales(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final t = AppLocalizations.of(context)!;
+    final provider = context.watch<FlashSaleProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -23,9 +32,9 @@ class _FlashSalesPageState extends State<FlashSalesPage> {
         backgroundColor:
         isDark ? theme.colorScheme.surface : const Color(0xFF4CAF50),
       ),
-      backgroundColor:
-      isDark ? theme.scaffoldBackgroundColor : const Color(0xFFF5F5F5),
-      body: Padding(
+      body: provider.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
@@ -42,62 +51,75 @@ class _FlashSalesPageState extends State<FlashSalesPage> {
                 );
 
                 if (result is FlashSale) {
-                  setState(() => flashSales.add(result));
+                  await provider.addFlashSale(result);
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content:
                       Text(t.flashSaleCreatedSuccessfully),
-                      backgroundColor: const Color(0xFF4CAF50),
+                      backgroundColor:
+                      const Color(0xFF4CAF50),
                     ),
                   );
                 }
               },
-              child: Text(t.createFlashSale,style: TextStyle(color: Colors.white)),
+              child: Text(
+                t.createFlashSale,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: flashSales.isEmpty
-                  ? Center(
-                child: Text(
-                  t.noActiveFlashSales,
-                  style: TextStyle(
-                    color: theme.colorScheme.onSurface
-                        .withOpacity(0.6),
-                  ),
-                ),
-              )
+              child: provider.flashSales.isEmpty
+                  ? Center(child: Text(t.noActiveFlashSales))
                   : ListView.builder(
-                itemCount: flashSales.length,
+                itemCount: provider.flashSales.length,
                 itemBuilder: (context, index) {
-                  final sale = flashSales[index];
+                  final sale =
+                  provider.flashSales[index];
+
                   return Card(
-                    color: theme.colorScheme.surface,
                     margin:
                     const EdgeInsets.only(bottom: 12),
                     child: ListTile(
-                      title: Text(
-                        sale.title,
-                        style: TextStyle(
-                          color:
-                          theme.colorScheme.onSurface,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      title: Text(sale.title),
                       subtitle: Text(
-                        "${sale.discount}% • ${sale.startTime} - ${sale.endTime}",
-                        style: TextStyle(
-                          color: theme.colorScheme.onSurface
-                              .withOpacity(0.6),
-                        ),
+                        "${sale.discount}% • ${sale.startTime} to ${sale.endTime}",
                       ),
-                      trailing: Switch(
-                        value: sale.active,
-                        activeColor:
-                        const Color(0xFF4CAF50),
-                        onChanged: (v) {
-                          setState(() => sale.active = v);
-                        },
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Switch(
+                            value: sale.active,
+                            activeColor:
+                            const Color(0xFF4CAF50),
+                            onChanged: (v) async {
+                              sale.active = v;
+                              await provider
+                                  .updateFlashSale(sale);
+
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    v
+                                        ? "Flash sale activated"
+                                        : "Flash sale deactivated",
+                                  ),
+                                  backgroundColor:
+                                  const Color(0xFF4CAF50),
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete,
+                                color: Colors.red),
+                            onPressed: () =>
+                                _confirmDelete(
+                                    context, sale),
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -108,5 +130,43 @@ class _FlashSalesPageState extends State<FlashSalesPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDelete(
+      BuildContext context, FlashSale sale) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Delete Flash Sale"),
+        content: const Text(
+            "Are you sure you want to delete this flash sale"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(
+              "Delete",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (ok == true) {
+      await context
+          .read<FlashSaleProvider>()
+          .deleteFlashSale(sale.id!);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Flash sale deleted successfully"),
+          backgroundColor: Color(0xFF4CAF50),
+        ),
+      );
+    }
   }
 }

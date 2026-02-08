@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 import '../services/api_service.dart';
@@ -20,6 +19,8 @@ class AdminProvider with ChangeNotifier {
     return cats;
   }
 
+  // ================= LOAD PRODUCTS =================
+
   Future<void> loadProducts() async {
     _isLoading = true;
     notifyListeners();
@@ -31,6 +32,8 @@ class AdminProvider with ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  // ================= ADD PRODUCT =================
 
   Future<void> addProduct(
       Product product,
@@ -58,6 +61,8 @@ class AdminProvider with ChangeNotifier {
         .showSnackBar(const SnackBar(content: Text('Product added')));
   }
 
+  // ================= UPDATE PRODUCT =================
+
   Future<void> updateProduct(
       Product product,
       Uint8List? imageBytes,
@@ -72,29 +77,34 @@ class AdminProvider with ChangeNotifier {
     await ApiService.updateProduct(product.id, product.toJson());
 
     final updated = Product.fromJson(response['product']);
-
     final index = _products.indexWhere((p) => p.id == product.id);
-    _products[index] = updated;
+
+    if (index != -1) {
+      _products[index] = updated;
+    }
 
     filterProducts('', _selectedCategory);
-
     notifyListeners();
 
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text('Product updated')));
   }
 
+  // ================= DELETE PRODUCT =================
+
   Future<void> deleteProduct(String id, BuildContext context) async {
     _products.removeWhere((p) => p.id == id);
     filterProducts('', _selectedCategory);
 
     await ApiService.deleteProduct(id);
-
     notifyListeners();
   }
 
+  // ================= FILTER =================
+
   void filterProducts(String query, String category) {
     _selectedCategory = category;
+
     _filteredProducts = _products.where((p) {
       final nameMatch = p.name.toLowerCase().contains(query.toLowerCase());
       final catMatch = category == 'All' || p.category == category;
@@ -102,5 +112,58 @@ class AdminProvider with ChangeNotifier {
     }).toList();
 
     notifyListeners();
+  }
+
+  // ================= QUICK RESTOCK =================
+
+  Future<void> restockProduct(
+      String productId,
+      int quantity,
+      BuildContext context,
+      ) async {
+    final index = _products.indexWhere((p) => p.id == productId);
+    if (index == -1) return;
+
+    final product = _products[index];
+    final newStock = product.stockQuantity + quantity;
+
+    await ApiService.updateProductStock(productId, newStock);
+
+    product.stockQuantity = newStock;
+    _products[index] = product;
+
+    filterProducts('', _selectedCategory);
+    notifyListeners();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Stock updated')),
+    );
+  }
+
+  // ================= BULK STOCK UPDATE =================
+
+  Future<void> bulkUpdateStock(
+      List<Map<String, dynamic>> updates,
+      BuildContext context,
+      ) async {
+    for (final item in updates) {
+      await ApiService.updateProductStock(
+        item['productId'],
+        item['stock'],
+      );
+
+      final index =
+      _products.indexWhere((p) => p.id == item['productId']);
+      if (index != -1) {
+        _products[index].stockQuantity = item['stock'];
+      }
+    }
+
+    filterProducts('', _selectedCategory);
+    notifyListeners();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('All stock updated')),
+    );
   }
 }

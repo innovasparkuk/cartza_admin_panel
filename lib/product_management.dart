@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'admin_provider.dart';
 import '../models/product.dart';
 import '../product_form.dart';
+import 'stock_management.dart';
 
 class ProductManagementPage extends StatefulWidget {
   const ProductManagementPage({super.key});
@@ -35,10 +36,18 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
         title: const Text('Product Management'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.cloud_upload),
-            tooltip: 'Bulk Upload',
-            onPressed: _showBulkUploadDialog,
+            icon: const Icon(Icons.inventory),
+            tooltip: 'Stock Management',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const StockManagementPage(),
+                ),
+              );
+            },
           ),
+
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: 'Add Product',

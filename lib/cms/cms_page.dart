@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'cms_edit_page.dart';
+import 'package:provider/provider.dart';
+import '../cms_provider.dart';
+import 'cms_form_sheet.dart';
 
 class CmsPage extends StatefulWidget {
   const CmsPage({super.key});
@@ -9,141 +11,134 @@ class CmsPage extends StatefulWidget {
 }
 
 class _CmsPageState extends State<CmsPage> {
-  final Map<String, String> cmsData = {
-    "About Us":
-    "We are an online marketplace offering a wide range of products with reliable service and secure checkout.",
-    "Privacy Policy":
-    "User data is collected only to process orders, improve services, and keep accounts secure.",
-    "FAQs":
-    "Answers to common questions about shopping, payments, and order tracking.",
-  };
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CmsProvider>().loadPages();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final provider = context.watch<CmsProvider>();
 
-    return Container(
-      color:
-      isDark ? theme.scaffoldBackgroundColor : const Color(0xFFF5F7FA),
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "CMS",
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Expanded(
-            child: ListView(
-              children: cmsData.keys.map((title) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 14),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isDark
-                          ? Colors.white10
-                          : Colors.grey.shade200,
-                    ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("CMS Pages"),
+        foregroundColor: Colors.white,
+        backgroundColor: const Color(0xFF4CAF50),
+      ),
+      body: provider.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+        padding: const EdgeInsets.all(16),
+        child: provider.pages.isEmpty
+            ? const Center(child: Text("No pages found"))
+            : ListView.builder(
+          itemCount: provider.pages.length,
+          itemBuilder: (context, index) {
+            final page = provider.pages[index];
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).shadowColor.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  )
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    page.title,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  child: Row(
+                  const SizedBox(height: 6),
+                  Text(
+                    page.content,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 8),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              title,
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color:
-                                theme.colorScheme.onSurface,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              cmsData[title]!,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: theme.colorScheme.onSurface
-                                    .withOpacity(0.6),
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 16),
                       TextButton.icon(
-                        style: TextButton.styleFrom(
-                          backgroundColor: isDark
-                              ? Colors.white10
-                              : const Color(0xFFE8F5E9),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 10),
+                        icon: const Icon(Icons.edit, size: 18),
+                        label: const Text("Edit"),
+                        onPressed: () {
+                          showCmsFormSheet(
+                            context,
+                            page: page,
+                          );
+                        },
+                      ),
+                      TextButton.icon(
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                          size: 18,
                         ),
-                        icon: Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: isDark
-                              ? Colors.white
-                              : const Color(0xFF388E3C),
-                        ),
-                        label: Text(
-                          "Edit",
-                          style: TextStyle(
-                            color: isDark
-                                ? Colors.white
-                                : const Color(0xFF388E3C),
-                            fontWeight: FontWeight.w600,
-                          ),
+                        label: const Text(
+                          "Delete",
+                          style: TextStyle(color: Colors.red),
                         ),
                         onPressed: () async {
-                          final updatedText = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CmsEditPage(
-                                title: title,
-                                content: cmsData[title]!,
-                              ),
-                            ),
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text("Delete Page"),
+                                content: const Text(
+                                  "Are you sure you want to delete this page?",
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, false),
+                                    child: const Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, true),
+                                    child: const Text(
+                                      "Delete",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
                           );
 
-                          if (updatedText != null) {
-                            setState(() {
-                              cmsData[title] = updatedText;
-                            });
-                            _success("Content updated");
+                          if (confirm == true) {
+                            provider.deletePage(page.id, context);
                           }
                         },
+
                       ),
                     ],
                   ),
-                );
-              }).toList(),
-            ),
-          ),
-        ],
+                ],
+              ),
+            );
+          },
+        ),
       ),
-    );
-  }
-
-  void _success(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(msg),
+      floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF4CAF50),
+        onPressed: () {
+          showCmsFormSheet(context);
+        },
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

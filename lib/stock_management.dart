@@ -351,12 +351,13 @@ class _StockManagementPageState extends State<StockManagementPage> {
               // Implement restock logic
               final quantity = int.tryParse(quantityController.text);
               if (quantity != null && quantity > 0) {
-                // Call provider method to update stock
-                final provider = Provider.of<AdminProvider>(context, listen: false);
-                // You need to implement a restock method in AdminProvider
-                // provider.restockProduct(product.id, quantity);
+                final provider =
+                Provider.of<AdminProvider>(context, listen: false);
+
+                provider.restockProduct(product.id, quantity, context);
                 Navigator.pop(context);
               }
+
             },
             child: const Text('Add Stock'),
           ),
@@ -381,11 +382,9 @@ class _StockManagementPageState extends State<StockManagementPage> {
       }
     }
 
-    // if (updates.isNotEmpty) {
-    //   provider.bulkUpdateStock(updates);
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Stock updated successfully')),
-    //   );
-    // }
+    if (updates.isNotEmpty) {
+      provider.bulkUpdateStock(updates, context);
+    }
+
   }
 }

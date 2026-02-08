@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shopease_admin/category_provider.dart';
+import 'package:shopease_admin/cms_provider.dart';
+import 'package:shopease_admin/coupon_provider.dart';
 import 'package:shopease_admin/dashboard/dashboard_page.dart';
+import 'package:shopease_admin/dashboard_provider.dart';
+import 'package:shopease_admin/flash_sale_provider.dart';
 import 'package:shopease_admin/product_form.dart';
 import 'package:shopease_admin/product_management.dart';
+import 'package:shopease_admin/BannerProvider.dart';
+import 'package:shopease_admin/coupon_provider.dart';
+
+
 
 import 'stock_management.dart';
 import 'theme/theme_provider.dart';
@@ -21,6 +30,14 @@ void main() {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => AdminProvider()), // ✅ ADD THIS
+        ChangeNotifierProvider(create: (_) => CmsProvider()),
+        ChangeNotifierProvider(create: (_) => BannerProvider()),
+        ChangeNotifierProvider(create: (_) => CouponProvider()),
+        ChangeNotifierProvider(create: (_) => FlashSaleProvider()),
+        ChangeNotifierProvider(
+          create: (_) => CategoryProvider()..loadCategories(),
+        ),
+        ChangeNotifierProvider(create: (_) => DashboardProvider()),
       ],
       child: const ShopEaseAdminApp(),
     ),

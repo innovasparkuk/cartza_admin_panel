@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shopease_admin/l10n/app_localizations.dart';
 import 'coupon_model.dart';
+import 'package:shopease_admin/coupon_provider.dart';
 
 class EditCouponPage extends StatefulWidget {
   final Coupon coupon;
-
   const EditCouponPage({required this.coupon});
 
   @override
@@ -29,6 +30,7 @@ class _EditCouponPageState extends State<EditCouponPage> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final t = AppLocalizations.of(context)!;
+    final provider = context.read<CouponProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -48,14 +50,13 @@ class _EditCouponPageState extends State<EditCouponPage> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               value: _type,
-              items: [
+              decoration: InputDecoration(labelText: t.discountType),
+              items: const [
                 DropdownMenuItem(
-                    value: "Percentage", child: Text(t.percentage)),
-                DropdownMenuItem(value: "Flat", child: Text(t.flat)),
+                    value: "Percentage", child: Text("Percentage")),
+                DropdownMenuItem(value: "Flat", child: Text("Flat")),
               ],
               onChanged: (v) => _type = v!,
-              decoration:
-              InputDecoration(labelText: t.discountType),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -70,14 +71,17 @@ class _EditCouponPageState extends State<EditCouponPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF4CAF50),
               ),
-              onPressed: () {
+              onPressed: () async {
                 widget.coupon
                   ..code = _code
                   ..type = _type
                   ..value = _value;
-                Navigator.pop(context, widget.coupon);
+
+                await provider.updateCoupon(widget.coupon);
+                Navigator.pop(context);
               },
-              child: Text(t.update,style: TextStyle(color: Colors.white)),
+              child:
+              Text(t.update, style: const TextStyle(color: Colors.white)),
             ),
           ],
         ),

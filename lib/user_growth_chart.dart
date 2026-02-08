@@ -1,78 +1,104 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:shopease_admin/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:shopease_admin/dashboard_provider.dart';
 
 class UserGrowthChart extends StatelessWidget {
+  const UserGrowthChart({super.key});
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final t = AppLocalizations.of(context)!;
+    final dashboard = context.watch<DashboardProvider>();
+    final data = dashboard.userGrowth;
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black26 : Colors.black12,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            t.userGrowth,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface,
-            ),
+            'User Growth',
+            style: theme.textTheme.titleMedium,
           ),
           const SizedBox(height: 6),
           Text(
-            t.last7Days,
-            style: TextStyle(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
-            ),
+            'Monthly active users',
+            style: theme.textTheme.bodySmall,
           ),
           const SizedBox(height: 20),
-
-          SizedBox(
-            height: 120,
-            child: LineChart(
-              LineChartData(
-                titlesData: FlTitlesData(show: false),
-                borderData: FlBorderData(show: false),
-                gridData: FlGridData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: const [
-                      FlSpot(0, 3),
-                      FlSpot(1, 4),
-                      FlSpot(2, 3.5),
-                      FlSpot(3, 5),
-                      FlSpot(4, 6),
-                      FlSpot(5, 6.5),
-                      FlSpot(6, 7),
-                    ],
-                    isCurved: true,
-                    color: theme.colorScheme.primary,
-                    barWidth: 3,
-                    dotData: FlDotData(show: false),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: theme.colorScheme.primary.withOpacity(0.15),
+          if (dashboard.isLoading)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(60),
+                child: CircularProgressIndicator(),
+              ),
+            )
+          else if (data.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(60),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.people_outline,
+                      size: 48,
+                      color: theme.colorScheme.onSurface.withOpacity(0.3),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No user growth data',
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            SizedBox(
+              height: 250,
+              child: LineChart(
+                LineChartData(
+                  minX: 0,
+                  maxX: data.length.toDouble() - 1,
+                  minY: 0,
+                  maxY: data.reduce((a, b) => a > b ? a : b).toDouble() + 10,
+                  gridData: FlGridData(show: true),
+                  borderData: FlBorderData(show: true),
+                  titlesData: FlTitlesData(
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
                     ),
                   ),
-                ],
+                  lineBarsData: [
+                    LineChartBarData(
+                      isCurved: true,
+                      barWidth: 3,
+                      color: Colors.blue,
+                      spots: List.generate(
+                        data.length,
+                            (i) => FlSpot(i.toDouble(), data[i].toDouble()),
+                      ),
+                      dotData: FlDotData(show: true),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: Colors.blue.withOpacity(0.15),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

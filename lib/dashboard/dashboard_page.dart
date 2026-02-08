@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shopease_admin/product_management.dart';
+import 'package:provider/provider.dart';
+import 'package:shopease_admin/customer_management.dart';
+import 'package:shopease_admin/order_page.dart';
+
 import 'dashboard_cards.dart';
 import 'dashboard_charts.dart';
 import 'sidebar.dart';
+
 import 'package:shopease_admin/l10n/app_localizations.dart';
-import 'package:shopease_admin/ai_recommendations/ai_recommendations_page.dart';
-import 'package:shopease_admin/settings/settings_page.dart';
+import 'package:shopease_admin/dashboard_provider.dart';
+
+import 'package:shopease_admin/categories_page.dart';
+import 'package:shopease_admin/product_management.dart';
 import 'package:shopease_admin/top_products.dart';
 import 'package:shopease_admin/user_growth_chart.dart';
 import 'package:shopease_admin/promotions/promotions_page.dart';
 import 'package:shopease_admin/cms/cms_page.dart';
 import 'package:shopease_admin/notifications/notifications_page.dart';
+import 'package:shopease_admin/settings/settings_page.dart';
+import 'package:shopease_admin/analytics_report.dart';
+import 'package:shopease_admin/ai_recommendations/ai_recommendations_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -27,9 +35,23 @@ class _DashboardPageState extends State<DashboardPage> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<DashboardProvider>().loadDashboardData();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchFocus.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final t = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -45,11 +67,11 @@ class _DashboardPageState extends State<DashboardPage> {
           Expanded(
             child: Column(
               children: [
-                _buildTopBar(context, isDark, t),
+                _buildTopBar(context, t),
                 Expanded(
                   child: Container(
-                    color: theme.scaffoldBackgroundColor,
-                    child: _buildContent(t),
+                    padding: const EdgeInsets.all(24),
+                    child: _buildContent(context, t),
                   ),
                 ),
               ],
@@ -60,12 +82,9 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildTopBar(
-      BuildContext context,
-      bool isDark,
-      AppLocalizations t,
-      ) {
+  Widget _buildTopBar(BuildContext context, AppLocalizations t) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
@@ -92,23 +111,15 @@ class _DashboardPageState extends State<DashboardPage> {
                       children: [
                         Icon(
                           Icons.search,
-                          color:
-                          theme.colorScheme.onSurface.withOpacity(0.6),
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: TextField(
                             controller: _searchController,
                             focusNode: _searchFocus,
-                            style: TextStyle(
-                              color: theme.colorScheme.onSurface,
-                            ),
                             decoration: InputDecoration(
                               hintText: t.search,
-                              hintStyle: TextStyle(
-                                color: theme.colorScheme.onSurface
-                                    .withOpacity(0.5),
-                              ),
                               border: InputBorder.none,
                             ),
                           ),
@@ -119,7 +130,6 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               const SizedBox(width: 24),
-
               _topIcon(
                 context,
                 icon: Icons.notifications_none,
@@ -132,24 +142,14 @@ class _DashboardPageState extends State<DashboardPage> {
                   );
                 },
               ),
-
               const SizedBox(width: 16),
-
-              _topIcon(
-                context,
-                icon: Icons.mail_outline,
-                onTap: () {},
-              ),
-
+              _topIcon(context, icon: Icons.mail_outline, onTap: () {}),
               const SizedBox(width: 24),
-
               CircleAvatar(
                 radius: 20,
                 backgroundColor: isDark
                     ? const Color(0xFF4CAF50)
-                    : (theme.appBarTheme.iconTheme?.color ??
-                    theme.iconTheme.color ??
-                    theme.colorScheme.primary),
+                    : theme.colorScheme.primary,
                 child: const Text(
                   'A',
                   style: TextStyle(
@@ -163,11 +163,7 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 12),
           Text(
             t.welcomeAdmin,
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface,
-            ),
+            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -198,42 +194,87 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildContent(AppLocalizations t) {
+  Widget _buildContent(BuildContext context, AppLocalizations t) {
     switch (_selectedMenuIndex) {
       case 0:
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              DashboardCards(),
-              const SizedBox(height: 24),
-              DashboardCharts(),
-              const SizedBox(height: 24),
-              Row(
+        return Consumer<DashboardProvider>(
+          builder: (context, provider, _) {
+            if (provider.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (provider.error != null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      provider.error!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        provider.loadDashboardData();
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return SingleChildScrollView(
+              child: Column(
                 children: [
-                  Expanded(child: UserGrowthChart()),
-                  const SizedBox(width: 20),
-                  Expanded(child: TopProducts()),
+                  // ✅ No parameters needed - DashboardCards reads from Provider directly
+                  const DashboardCards(),
+                  const SizedBox(height: 24),
+                  // ✅ No parameters needed - DashboardCharts reads from Provider directly
+                  const DashboardCharts(),
+                  const SizedBox(height: 24),
+                  const Row(
+                    children: [
+                      Expanded(
+                        child: UserGrowthChart(),
+                      ),
+                      SizedBox(width: 20),
+                      Expanded(
+                        child: TopProducts(),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-            ],
-          ),
+            );
+          },
         );
+      case 1:
+        return const OrdersPageFinal();
       case 2:
         return const ProductManagementPage();
-
+      case 3:
+        return const CategoriesPage();
       case 4:
-        return const CmsPage();
-
+        return const CustomerManagementDashboard();
       case 5:
         return const NotificationsPage();
-
       case 6:
         return PromotionsPage();
-
+      case 7:
+        return AnalyticsScreen();
       case 9:
         return const SettingsPage();
-
       case 10:
         return AIRecommendationsPage();
 
@@ -241,12 +282,10 @@ class _DashboardPageState extends State<DashboardPage> {
         return Center(
           child: Text(
             t.pageUnderDevelopment,
-            style: TextStyle(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withOpacity(0.6),
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Colors.grey),
           ),
         );
     }

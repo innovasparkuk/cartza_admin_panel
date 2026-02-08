@@ -4,6 +4,7 @@ class Product {
   String description;
   double price;
   String category;
+  String categoryId; // ✅ ADDED
   int stockQuantity;
   int lowStockThreshold;
   String imageUrl;
@@ -18,6 +19,7 @@ class Product {
     required this.description,
     required this.price,
     required this.category,
+    this.categoryId = '', // ✅ ADDED
     required this.stockQuantity,
     this.lowStockThreshold = 10,
     this.imageUrl = '',
@@ -34,6 +36,7 @@ class Product {
       description: json['description'] ?? 'No description',
       price: (json['price'] ?? 0).toDouble(),
       category: json['category'] ?? 'General',
+      categoryId: json['categoryId'] ?? '', // ✅ ADDED
       stockQuantity: json['stockQuantity'] ?? 0,
       lowStockThreshold: json['lowStockThreshold'] ?? 10,
       imageUrl: json['imageUrl'] ?? '',
@@ -50,6 +53,7 @@ class Product {
       'description': description,
       'price': price,
       'category': category,
+      'categoryId': categoryId, // ✅ ADDED
       'stockQuantity': stockQuantity,
       'lowStockThreshold': lowStockThreshold,
       'imageUrl': imageUrl,

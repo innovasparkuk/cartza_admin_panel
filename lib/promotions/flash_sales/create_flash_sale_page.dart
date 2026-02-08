@@ -113,18 +113,34 @@ class _CreateFlashSalePageState extends State<CreateFlashSalePage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF4CAF50),
                 ),
-                onPressed: () {
+                onPressed: () async {
+                  if (_titleController.text.isEmpty ||
+                      _discountController.text.isEmpty ||
+                      _startController.text.isEmpty ||
+                      _endController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("All fields are required"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
                   final sale = FlashSale(
+                    id: widget.sale?.id,
                     title: _titleController.text,
-                    discount:
-                    int.tryParse(_discountController.text) ?? 0,
+                    discount: int.parse(_discountController.text),
                     startTime: _startController.text,
                     endTime: _endController.text,
                     active: widget.sale?.active ?? true,
                   );
+
                   Navigator.pop(context, sale);
                 },
-                child: Text(widget.sale == null ? t.create : t.update),
+
+
+                child: Text(widget.sale == null ? t.create : t.update,style: TextStyle(color: Colors.white),),
               ),
             ),
           ],

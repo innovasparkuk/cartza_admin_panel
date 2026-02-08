@@ -33,6 +33,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get salesTrends => 'Sales Trends';
 
   @override
+  String get analyticsMenu => 'Analytics';
+
+  @override
   String get last7Days => 'Last 7 days';
 
   @override
@@ -107,6 +110,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ordersMenu => 'Orders';
+
+  @override
+  String get customersMenu => 'Customers';
+
+  @override
+  String get paymentsMenu => 'Payments';
+
+  @override
+  String get reviewsMenu => 'Reviews';
 
   @override
   String get productsMenu => 'Products';

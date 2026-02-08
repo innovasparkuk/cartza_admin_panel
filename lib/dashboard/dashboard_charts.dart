@@ -1,286 +1,246 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 import 'package:shopease_admin/l10n/app_localizations.dart';
+import 'package:shopease_admin/dashboard_provider.dart';
 
 class DashboardCharts extends StatelessWidget {
+  const DashboardCharts({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
-        Expanded(child: _buildSalesChart(context)),
-        const SizedBox(width: 20),
-        Expanded(child: _buildCategoriesChart(context)),
+      children: const [
+        Expanded(child: _SalesChart()),
+        SizedBox(width: 20),
+        Expanded(child: _CategoriesChart()),
       ],
     );
   }
+}
 
-  Widget _buildSalesChart(BuildContext context) {
+/* ================= SALES TREND CHART ================= */
+
+class _SalesChart extends StatelessWidget {
+  const _SalesChart();
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final t = AppLocalizations.of(context)!;
+    final dashboard = context.watch<DashboardProvider>();
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? Colors.white10 : Colors.grey.shade200,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black26 : Colors.black12,
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.trending_up, color: Colors.green),
-                  const SizedBox(width: 10),
-                  Text(
-                    t.salesTrends,
-                    style: theme.textTheme.titleMedium,
-                  ),
-                ],
+          Text(t.salesTrends, style: theme.textTheme.titleMedium),
+          const SizedBox(height: 6),
+          Text(t.revenueGrowthOverTime, style: theme.textTheme.bodySmall),
+          const SizedBox(height: 20),
+
+          if (dashboard.isLoading)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(60),
+                child: CircularProgressIndicator(),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceVariant,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
+            )
+          else if (dashboard.salesTrend.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(60),
+                child: Column(
                   children: [
-                    Icon(Icons.calendar_today,
-                        size: 14,
-                        color: theme.colorScheme.onSurface.withOpacity(0.6)),
-                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.show_chart,
+                      size: 48,
+                      color: theme.colorScheme.onSurface.withOpacity(0.3),
+                    ),
+                    const SizedBox(height: 16),
                     Text(
-                      t.last7Days,
-                      style: theme.textTheme.bodySmall,
+                      'No sales data available',
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          Text(
-            t.revenueGrowthOverTime,
-            style: theme.textTheme.bodySmall,
-          ),
-
-          const SizedBox(height: 20),
-
-          SizedBox(
-            height: 250,
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  getDrawingHorizontalLine: (_) => FlLine(
-                    color: isDark ? Colors.white12 : Colors.grey.shade300,
-                    strokeWidth: 1,
+            )
+          else
+            SizedBox(
+              height: 250,
+              child: LineChart(
+                LineChartData(
+                  minX: 0,
+                  maxX: dashboard.salesTrend.length.toDouble() - 1,
+                  minY: 0,
+                  maxY: dashboard.salesTrend.reduce(
+                        (a, b) => a > b ? a : b,
+                  ) +
+                      5,
+                  gridData: FlGridData(show: true),
+                  borderData: FlBorderData(show: true),
+                  titlesData: FlTitlesData(
+                    topTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
-                ),
-                titlesData: FlTitlesData(
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 30,
-                      getTitlesWidget: (value, meta) {
-                        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            days[value.toInt()],
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
-                            ),
-                          ),
-                        );
-                      },
+                  lineBarsData: [
+                    LineChartBarData(
+                      isCurved: true,
+                      barWidth: 3,
+                      color: Colors.green,
+                      spots: List.generate(
+                        dashboard.salesTrend.length,
+                            (i) => FlSpot(
+                          i.toDouble(),
+                          dashboard.salesTrend[i],
+                        ),
+                      ),
+                      dotData: FlDotData(show: true),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: Colors.green.withOpacity(0.15),
+                      ),
                     ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 40,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          '₹${value.toInt()}K',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  ],
                 ),
-                borderData: FlBorderData(
-                  show: true,
-                  border: Border.all(
-                    color: isDark ? Colors.white12 : Colors.grey.shade300,
-                  ),
-                ),
-                minX: 0,
-                maxX: 6,
-                minY: 0,
-                maxY: 10,
-                lineBarsData: [
-                  LineChartBarData(
-                    isCurved: true,
-                    color: Colors.green,
-                    barWidth: 3,
-                    spots: const [
-                      FlSpot(0, 4),
-                      FlSpot(1, 3.5),
-                      FlSpot(2, 5),
-                      FlSpot(3, 7.2),
-                      FlSpot(4, 6.8),
-                      FlSpot(5, 8.5),
-                      FlSpot(6, 9),
-                    ],
-                    dotData: FlDotData(show: true),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: Colors.green.withOpacity(0.2),
-                    ),
-                  ),
-                ],
               ),
             ),
-          ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildCategoriesChart(BuildContext context) {
+/* ================= CATEGORY DISTRIBUTION CHART ================= */
+
+class _CategoriesChart extends StatelessWidget {
+  const _CategoriesChart();
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final t = AppLocalizations.of(context)!;
-
-    final data = [
-      {'label': t.electronics, 'value': 12, 'color': Colors.orange},
-      {'label': t.fashion, 'value': 19, 'color': Colors.blue},
-      {'label': t.home, 'value': 8, 'color': Colors.green},
-      {'label': t.books, 'value': 15, 'color': Colors.purple},
-      {'label': t.sports, 'value': 10, 'color': Colors.deepOrange},
-    ];
+    final dashboard = context.watch<DashboardProvider>();
+    final data = dashboard.categoryStats;
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? Colors.white10 : Colors.grey.shade200,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black26 : Colors.black12,
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(t.topCategories, style: theme.textTheme.titleMedium),
-          const SizedBox(height: 8),
-          Text(
-            t.salesDistributionByCategory,
-            style: theme.textTheme.bodySmall,
-          ),
+          const SizedBox(height: 6),
+          Text(t.salesDistributionByCategory, style: theme.textTheme.bodySmall),
           const SizedBox(height: 20),
 
-          SizedBox(
-            height: 250,
-            child: BarChart(
-              BarChartData(
-                maxY: 25,
-                gridData: FlGridData(show: false),
-                borderData: FlBorderData(show: false),
-                titlesData: FlTitlesData(
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 40,
-                      getTitlesWidget: (value, meta) {
-                        final i = value.toInt();
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            data[i]['label'] as String,
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      },
+          if (dashboard.isLoading)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(60),
+                child: CircularProgressIndicator(),
+              ),
+            )
+          else if (data.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(60),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.category,
+                      size: 48,
+                      color: theme.colorScheme.onSurface.withOpacity(0.3),
                     ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 32,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          '${value.toInt()}%',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                ),
-                barGroups: List.generate(data.length, (i) {
-                  return BarChartGroupData(
-                    x: i,
-                    barRods: [
-                      BarChartRodData(
-                        toY: (data[i]['value'] as int).toDouble(),
-                        width: 22,
-                        color: data[i]['color'] as Color,
-                        borderRadius: BorderRadius.circular(6),
-                        backDrawRodData: BackgroundBarChartRodData(
-                          show: true,
-                          toY: 25,
-                          color: isDark
-                              ? Colors.white10
-                              : Colors.grey.shade200,
-                        ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No categories available',
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface.withOpacity(0.5),
                       ),
-                    ],
-                  );
-                }),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Add categories to see distribution',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: theme.colorScheme.onSurface.withOpacity(0.4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            SizedBox(
+              height: 250,
+              child: BarChart(
+                BarChartData(
+                  maxY: 100,
+                  gridData: FlGridData(show: false),
+                  borderData: FlBorderData(show: false),
+                  titlesData: FlTitlesData(
+                    topTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) {
+                          final i = value.toInt();
+                          if (i >= data.length) return const SizedBox();
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text(
+                              data[i]['label'],
+                              style: const TextStyle(fontSize: 11),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) =>
+                            Text('${value.toInt()}%'),
+                      ),
+                    ),
+                  ),
+                  barGroups: List.generate(data.length, (i) {
+                    return BarChartGroupData(
+                      x: i,
+                      barRods: [
+                        BarChartRodData(
+                          toY: (data[i]['value'] as num).toDouble(),
+                          width: 22,
+                          color: data[i]['color'] as Color,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ],
+                    );
+                  }),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

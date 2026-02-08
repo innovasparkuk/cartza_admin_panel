@@ -1,10 +1,10 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:provider/provider.dart';
 import '../models/product.dart';
+import '../category_provider.dart';
 
 class ProductForm extends StatefulWidget {
   final Product? product;
@@ -26,21 +26,33 @@ class _ProductFormState extends State<ProductForm> {
   late TextEditingController name;
   late TextEditingController desc;
   late TextEditingController price;
-  late TextEditingController category;
   late TextEditingController stock;
 
+  String? _selectedCategoryId;
+  String? _selectedCategoryName;
   Uint8List? selectedImageBytes;
 
   @override
   void initState() {
     super.initState();
+
+    // Load categories
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CategoryProvider>().loadCategories();
+    });
+
     name = TextEditingController(text: widget.product?.name ?? '');
     desc = TextEditingController(text: widget.product?.description ?? '');
     price = TextEditingController(text: widget.product?.price.toString() ?? '');
-    category = TextEditingController(text: widget.product?.category ?? '');
     stock = TextEditingController(
       text: widget.product?.stockQuantity.toString() ?? '',
     );
+
+    // ✅ Initialize category selection
+    if (widget.product != null) {
+      _selectedCategoryId = widget.product!.categoryId;
+      _selectedCategoryName = widget.product!.category;
+    }
   }
 
   Future<void> pickImage() async {
@@ -64,6 +76,9 @@ class _ProductFormState extends State<ProductForm> {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
+    final categories = context.watch<CategoryProvider>().categories
+        .where((c) => c.status == 'Active' && c.parentId.isEmpty)
+        .toList();
 
     return Dialog(
       insetPadding: const EdgeInsets.all(16),
@@ -87,7 +102,6 @@ class _ProductFormState extends State<ProductForm> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 16),
 
                   GestureDetector(
@@ -117,7 +131,6 @@ class _ProductFormState extends State<ProductForm> {
                           : const Center(child: Text('Select image')),
                     ),
                   ),
-
                   const SizedBox(height: 16),
 
                   TextFormField(
@@ -125,6 +138,29 @@ class _ProductFormState extends State<ProductForm> {
                     decoration: deco('Name'),
                     validator: (v) =>
                     v == null || v.isEmpty ? 'Required' : null,
+                  ),
+                  const SizedBox(height: 10),
+
+                  // ✅ Category Dropdown
+                  DropdownButtonFormField<String>(
+                    value: _selectedCategoryId,
+                    decoration: deco('Category'),
+                    items: categories.map((category) {
+                      return DropdownMenuItem(
+                        value: category.id,
+                        child: Text(category.categoryName),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategoryId = value;
+                        _selectedCategoryName = categories
+                            .firstWhere((c) => c.id == value)
+                            .categoryName;
+                      });
+                    },
+                    validator: (v) =>
+                    v == null ? 'Please select a category' : null,
                   ),
                   const SizedBox(height: 10),
 
@@ -148,20 +184,11 @@ class _ProductFormState extends State<ProductForm> {
                   const SizedBox(height: 10),
 
                   TextFormField(
-                    controller: category,
-                    decoration: deco('Category'),
-                  ),
-                  const SizedBox(height: 10),
-
-                  TextFormField(
                     controller: stock,
                     decoration: deco('Stock'),
                     keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
-
                   const SizedBox(height: 20),
 
                   SizedBox(
@@ -178,7 +205,8 @@ class _ProductFormState extends State<ProductForm> {
                           name: name.text,
                           description: desc.text,
                           price: double.tryParse(price.text) ?? 0,
-                          category: category.text,
+                          category: _selectedCategoryName ?? '',
+                          categoryId: _selectedCategoryId ?? '', // ✅ ADDED
                           stockQuantity: int.tryParse(stock.text) ?? 0,
                           imageUrl: widget.product?.imageUrl ?? '',
                           createdAt:
@@ -198,5 +226,14 @@ class _ProductFormState extends State<ProductForm> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    name.dispose();
+    desc.dispose();
+    price.dispose();
+    stock.dispose();
+    super.dispose();
   }
 }

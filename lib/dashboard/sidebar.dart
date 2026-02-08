@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopease_admin/analytics_report.dart';
 import 'package:shopease_admin/l10n/app_localizations.dart';
 import 'package:shopease_admin/ai_recommendations/ai_recommendations_page.dart';
 
@@ -48,20 +49,15 @@ class SidebarMenu extends StatelessWidget {
                   _menu(context, Icons.shopping_bag, t.ordersMenu, 1, isDark),
                   _menu(context, Icons.inventory, t.productsMenu, 2, isDark),
                   _menu(context, Icons.category, t.categoriesMenu, 3, isDark),
-                  _menu(context, Icons.article, t.cmsMenu, 4, isDark),
+                  _menu(context, Icons.group, t.customersMenu, 4, isDark),
+                  _menu(context, Icons.payment, t.paymentsMenu, 5, isDark),
                   _menu(context, Icons.local_offer, t.promotionsMenu, 6, isDark),
+                  _menu(context, Icons.star, t.reviewsMenu, 7, isDark),
 
-                  const SizedBox(height: 24),
-
-                  _sectionTitle(t.analyticsSection, isDark),
-                  _menu(context, Icons.analytics, t.reportsMenu, 7, isDark),
-                  _menu(context, Icons.trending_up, t.insights, 8, isDark),
-                  _menu(context, Icons.auto_awesome, t.aiInsights, 10, isDark),
-
-                  const SizedBox(height: 24),
-
-                  _sectionTitle(t.systemSection, isDark),
-                  _menu(context, Icons.settings, t.settingsMenu, 9, isDark),
+                  _menu(context, Icons.article, t.cmsMenu, 8, isDark),
+                  _menu(context, Icons.analytics, t.analyticsMenu, 9, isDark),
+            //      _menu(context, Icons.auto_awesome, t.aiInsights, 10, isDark),
+              _menu(context, Icons.settings, t.settingsMenu, 11, isDark),
                 ],
               ),
             ),
@@ -97,7 +93,6 @@ class SidebarMenu extends StatelessWidget {
       ) {
     final isSelected = selectedIndex == index;
     final primary = Color(0xFF4CAF50);
-
     final textColor = isDark ? Colors.white : Colors.black87;
 
     return Container(
@@ -110,7 +105,19 @@ class SidebarMenu extends StatelessWidget {
             : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
-          onTap: () => onMenuSelected(index),
+          onTap: () {
+            if (index == 7) { // Analytics ka index 7 hai
+              // Full screen analytics page open karein
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>AnalyticsScreen(),
+                ),
+              );
+            } else {
+              // Normal menu selection
+              onMenuSelected(index);
+            }
+          },
           borderRadius: BorderRadius.circular(10),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -139,7 +146,6 @@ class SidebarMenu extends StatelessWidget {
                         ? Colors.white
                         : (isDark ? Colors.white : Colors.black),
                   ),
-
                 ),
                 const SizedBox(width: 12),
                 Expanded(

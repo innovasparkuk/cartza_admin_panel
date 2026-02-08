@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shopease_admin/l10n/app_localizations.dart';
-import 'coupon_model.dart';
+import 'package:shopease_admin/coupon_provider.dart';
 import 'create_coupon_page.dart';
 import 'edit_coupon_page.dart';
 
@@ -10,27 +11,20 @@ class CouponListPage extends StatefulWidget {
 }
 
 class _CouponListPageState extends State<CouponListPage> {
-  final List<Coupon> coupons = [
-    Coupon(
-      code: "SAVE10",
-      type: "Percentage",
-      value: 10,
-      expiryDate: DateTime(2025, 12, 31),
-    ),
-    Coupon(
-      code: "FLAT500",
-      type: "Flat",
-      value: 500,
-      expiryDate: DateTime(2025, 10, 10),
-      isActive: false,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CouponProvider>().loadCoupons();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final t = AppLocalizations.of(context)!;
+    final provider = context.watch<CouponProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -40,7 +34,9 @@ class _CouponListPageState extends State<CouponListPage> {
       ),
       backgroundColor:
       isDark ? theme.scaffoldBackgroundColor : const Color(0xFFF6F7F9),
-      body: Padding(
+      body: provider.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
@@ -50,99 +46,164 @@ class _CouponListPageState extends State<CouponListPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF4CAF50),
                 ),
-                icon: const Icon(Icons.add,color: Colors.white,),
-                label: Text(t.addCoupon,style: TextStyle(color: Colors.white),),
+                icon: const Icon(Icons.add, color: Colors.white),
+                label: Text(t.addCoupon,
+                    style: const TextStyle(color: Colors.white)),
                 onPressed: () async {
                   final result = await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => CreateCouponPage()),
                   );
 
-                  if (result is Coupon) {
-                    setState(() => coupons.add(result));
-                    _success(t.couponAdded);
+                  if (result != null) {
+                    try {
+                      await provider.addCoupon(result);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Color(0xFF4CAF50),
+                          content: Text(
+                            "Coupon added successfully",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            "Failed to add coupon",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      );
+                    }
                   }
                 },
               ),
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: coupons.isEmpty
-                  ? Center(
-                child: Text(
-                  t.noCouponsFound,
-                  style: TextStyle(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
-                  ),
-                ),
-              )
+              child: provider.coupons.isEmpty
+                  ? Center(child: Text(t.noCouponsFound))
                   : ListView.builder(
-                itemCount: coupons.length,
-                itemBuilder: (context, index) {
-                  final c = coupons[index];
+                itemCount: provider.coupons.length,
+                itemBuilder: (_, index) {
+                  final c = provider.coupons[index];
 
                   return Card(
                     color: theme.colorScheme.surface,
-                    margin: const EdgeInsets.only(bottom: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    margin:
+                    const EdgeInsets.only(bottom: 12),
                     child: ListTile(
-                      title: Text(
-                        c.code,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
+                      title: Text(c.code),
                       subtitle: Text(
-                        "${c.type} • ${c.value} • Exp ${c.expiryDate.toString().substring(0, 10)}",
-                        style: TextStyle(
-                          color: theme.colorScheme.onSurface
-                              .withOpacity(0.6),
-                        ),
-                      ),
+                          "${c.type} • ${c.value} • Exp ${c.expiryDate.toString().substring(0, 10)}"),
                       leading: Switch(
                         value: c.isActive,
                         activeColor: const Color(0xFF4CAF50),
-                        onChanged: (v) {
-                          setState(() => c.isActive = v);
+                        onChanged: (v) async {
+                          c.isActive = v;
+
+                          try {
+                            await provider.updateCoupon(c);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: const Color(0xFF4CAF50),
+                                content: Text(
+                                  v ? "Coupon activated" : "Coupon deactivated",
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                backgroundColor: Colors.red,
+                                content: Text(
+                                  "Failed to update status",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            );
+                          }
                         },
                       ),
+
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              color:
-                              theme.colorScheme.onSurface,
-                            ),
-                            onPressed: () async {
-                              final updated =
-                              await Navigator.push(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () {
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) =>
-                                      EditCouponPage(coupon: c),
+                                      EditCouponPage(
+                                          coupon: c),
                                 ),
                               );
-
-                              if (updated != null) {
-                                setState(() {});
-                                _success(t.couponUpdated);
-                              }
                             },
                           ),
                           IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
+                            icon: const Icon(Icons.delete, color: Colors.red),
                             onPressed: () {
-                              _deleteConfirm(index, t);
+                              showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: const Text("Delete Coupon"),
+                                  content: const Text(
+                                    "Are you sure you want to delete this coupon?",
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("Cancel"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+
+                                        try {
+                                          await provider.deleteCoupon(c.id!);
+
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              backgroundColor: Color(0xFF4CAF50),
+                                              content: Text(
+                                                "Coupon deleted successfully",
+                                                style: TextStyle(color: Colors.white),
+                                              ),
+                                            ),
+                                          );
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              backgroundColor: Colors.red,
+                                              content: Text(
+                                                "Failed to delete coupon",
+                                                style: TextStyle(color: Colors.white),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: const Text(
+                                        "Delete",
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
                             },
                           ),
+
                         ],
                       ),
                     ),
@@ -152,46 +213,6 @@ class _CouponListPageState extends State<CouponListPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _deleteConfirm(int index, AppLocalizations t) {
-    final theme = Theme.of(context);
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: theme.colorScheme.surface,
-        title: Text(t.deleteCoupon),
-        content:
-        Text(t.deleteCouponConfirmation),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(t.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() => coupons.removeAt(index));
-              Navigator.pop(context);
-              _success(t.couponDeleted);
-            },
-            child: Text(
-              t.delete,
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _success(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        backgroundColor: const Color(0xFF4CAF50),
       ),
     );
   }
