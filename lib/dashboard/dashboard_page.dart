@@ -271,12 +271,13 @@ class _DashboardPageState extends State<DashboardPage> {
         return const NotificationsPage();
       case 6:
         return PromotionsPage();
-      case 7:
-        return AnalyticsScreen();
+
+      case 8:
+        return CmsPage();
       case 9:
-        return const SettingsPage();
+        return AnalyticsScreen();
       case 10:
-        return AIRecommendationsPage();
+        return const SettingsPage();
 
       default:
         return Center(

@@ -135,150 +135,237 @@ class _CustomerManagementDashboardState
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
-          width: 700,
-          constraints: const BoxConstraints(maxHeight: 600),
-          padding: const EdgeInsets.all(30),
+          width: 750,
+          constraints: const BoxConstraints(maxHeight: 650),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white,
+                Colors.green.shade50.withOpacity(0.3),
+              ],
+            ),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Customer Details',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+              // Header with gradient
+              Container(
+                padding: const EdgeInsets.all(30),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.green.shade600,
+                      Colors.green.shade400,
+                    ],
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Customer Details',
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const Divider(height: 30),
 
               // Scrollable Content
               Expanded(
                 child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(30),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Customer Header
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.green.shade100,
-                            child: Text(
-                              customer.name[0].toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
+                      // Customer Profile Card
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.green.withOpacity(0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            // Avatar with gradient border
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.green.shade400,
+                                    Colors.green.shade600,
+                                  ],
+                                ),
+                              ),
+                              child: CircleAvatar(
+                                radius: 45,
+                                backgroundColor: Colors.white,
+                                child: CircleAvatar(
+                                  radius: 42,
+                                  backgroundColor: Colors.green.shade100,
+                                  child: Text(
+                                    customer.name[0].toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 36,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green.shade700,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  customer.name,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                            const SizedBox(width: 24),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    customer.name,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  customer.email,
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 13,
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.email,
+                                          size: 16, color: Colors.grey.shade600),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        customer.email,
+                                        style: TextStyle(
+                                          color: Colors.grey.shade700,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  customer.phone,
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 13,
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.phone,
+                                          size: 16, color: Colors.grey.shade600),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        customer.phone,
+                                        style: TextStyle(
+                                          color: Colors.grey.shade700,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(customer.status)
-                                  .withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              customer.status.label,
-                              style: TextStyle(
-                                color: _getStatusColor(customer.status),
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                                ],
                               ),
                             ),
-                          ),
-                        ],
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: _getStatusGradient(customer.status),
+                                ),
+                                borderRadius: BorderRadius.circular(25),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: _getStatusColor(customer.status)
+                                        .withOpacity(0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                customer.status.label,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
 
                       const SizedBox(height: 24),
 
-                      // Stats Grid
+                      // Stats Grid with improved design
                       GridView.count(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         crossAxisCount: 2,
-                        childAspectRatio: 2.5,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
+                        childAspectRatio: 2.2,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
                         children: [
-                          _buildDialogStatCard(
+                          _buildImprovedStatCard(
                             'Customer ID',
                             customer.id,
-                            Icons.badge,
+                            Icons.badge_outlined,
                             Colors.blue,
                           ),
-                          _buildDialogStatCard(
+                          _buildImprovedStatCard(
                             'Total Orders',
                             customer.totalOrders.toString(),
-                            Icons.shopping_cart,
+                            Icons.shopping_cart_outlined,
                             Colors.green,
                           ),
-                          _buildDialogStatCard(
+                          _buildImprovedStatCard(
                             'Join Date',
                             '${customer.joinDate.day}/${customer.joinDate.month}/${customer.joinDate.year}',
-                            Icons.calendar_today,
+                            Icons.calendar_today_outlined,
                             Colors.orange,
                           ),
-                          _buildDialogStatCard(
+                          _buildImprovedStatCard(
                             'Customer Age',
                             customerAge,
-                            Icons.access_time,
+                            Icons.access_time_outlined,
                             Colors.purple,
                           ),
-                          _buildDialogStatCard(
+                          _buildImprovedStatCard(
                             'Last Active',
                             lastActiveText,
                             Icons.update,
                             Colors.teal,
                           ),
-                          _buildDialogStatCard(
+                          _buildImprovedStatCard(
                             'Status',
                             customer.status.label,
-                            Icons.check_circle,
+                            Icons.check_circle_outline,
                             _getStatusColor(customer.status),
                           ),
                         ],
@@ -286,41 +373,59 @@ class _CustomerManagementDashboardState
 
                       const SizedBox(height: 24),
 
-                      // Timeline Section
+                      // Timeline Section with gradient
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(12),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.green.shade50,
+                              Colors.blue.shade50,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.green.shade200,
+                            width: 1,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Customer Timeline',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Row(
+                              children: [
+                                Icon(Icons.timeline,
+                                    color: Colors.green.shade700, size: 22),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'Customer Timeline',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                            _buildTimelineItem(
+                            const SizedBox(height: 20),
+                            _buildImprovedTimelineItem(
                               'Joined',
                               '${customer.joinDate.day}/${customer.joinDate.month}/${customer.joinDate.year}',
-                              Icons.person_add,
+                              Icons.person_add_outlined,
                               Colors.green,
                             ),
-                            _buildTimelineItem(
+                            _buildImprovedTimelineItem(
                               'Last Active',
                               lastActiveText,
-                              Icons.access_time,
+                              Icons.access_time_filled,
                               Colors.blue,
                             ),
-                            _buildTimelineItem(
+                            _buildImprovedTimelineItem(
                               'Total Orders',
                               '${customer.totalOrders} orders placed',
-                              Icons.shopping_bag,
+                              Icons.shopping_bag_outlined,
                               Colors.orange,
+                              isLast: true,
                             ),
                           ],
                         ),
@@ -330,60 +435,113 @@ class _CustomerManagementDashboardState
                 ),
               ),
 
-              const SizedBox(height: 20),
-
-              // Action Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        toggleBlock(customer);
-                      },
-                      icon: Icon(
-                        customer.status == CustomerStatus.blocked
-                            ? Icons.check_circle
-                            : Icons.block,
-                      ),
-                      label: Text(
-                        customer.status == CustomerStatus.blocked
-                            ? 'Unblock'
-                            : 'Block',
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                        customer.status == CustomerStatus.blocked
-                            ? Colors.green
-                            : Colors.red,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+              // Action Buttons with gradient
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: customer.status == CustomerStatus.blocked
+                                ? [Colors.green.shade400, Colors.green.shade600]
+                                : [Colors.red.shade400, Colors.red.shade600],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: (customer.status == CustomerStatus.blocked
+                                  ? Colors.green
+                                  : Colors.red)
+                                  .withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            toggleBlock(customer);
+                          },
+                          icon: Icon(
+                            customer.status == CustomerStatus.blocked
+                                ? Icons.check_circle
+                                : Icons.block,
+                            size: 20,
+                          ),
+                          label: Text(
+                            customer.status == CustomerStatus.blocked
+                                ? 'Unblock Customer'
+                                : 'Block Customer',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: Colors.white,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        sendPromotion(customer);
-                      },
-                      icon: const Icon(Icons.email),
-                      label: const Text('Send Promotion'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.blue.shade400, Colors.blue.shade600],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.blue.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            sendPromotion(customer);
+                          },
+                          icon: const Icon(Icons.email_outlined, size: 20),
+                          label: const Text(
+                            'Send Promotion',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: Colors.white,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -392,26 +550,38 @@ class _CustomerManagementDashboardState
     );
   }
 
-  Widget _buildDialogStatCard(
+  Widget _buildImprovedStatCard(
       String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(6),
+              gradient: LinearGradient(
+                colors: [
+                  color.withOpacity(0.2),
+                  color.withOpacity(0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: color, size: 18),
+            child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -419,17 +589,19 @@ class _CustomerManagementDashboardState
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 10,
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   value,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                    fontSize: 14,
+                    color: Colors.black87,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -441,45 +613,103 @@ class _CustomerManagementDashboardState
     );
   }
 
-  Widget _buildTimelineItem(
-      String title, String value, IconData icon, Color color) {
+  Widget _buildImprovedTimelineItem(
+      String title, String value, IconData icon, Color color,
+      {bool isLast = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 18),
+          Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      color.withOpacity(0.8),
+                      color,
+                    ],
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(icon, color: Colors.white, size: 20),
+              ),
+              if (!isLast)
+                Container(
+                  width: 2,
+                  height: 30,
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        color.withOpacity(0.5),
+                        color.withOpacity(0.1),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 16),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey,
-                  ),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: color.withOpacity(0.2),
+                  width: 1,
                 ),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 2),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  List<Color> _getStatusGradient(CustomerStatus status) {
+    switch (status) {
+      case CustomerStatus.active:
+        return [Colors.green.shade400, Colors.green.shade600];
+      case CustomerStatus.inactive:
+        return [Colors.orange.shade400, Colors.orange.shade600];
+      case CustomerStatus.blocked:
+        return [Colors.red.shade400, Colors.red.shade600];
+    }
   }
 
   int get activeCustomers =>

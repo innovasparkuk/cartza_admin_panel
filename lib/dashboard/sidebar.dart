@@ -53,33 +53,14 @@ class SidebarMenu extends StatelessWidget {
                   _menu(context, Icons.payment, t.paymentsMenu, 5, isDark),
                   _menu(context, Icons.local_offer, t.promotionsMenu, 6, isDark),
                   _menu(context, Icons.star, t.reviewsMenu, 7, isDark),
-
                   _menu(context, Icons.article, t.cmsMenu, 8, isDark),
                   _menu(context, Icons.analytics, t.analyticsMenu, 9, isDark),
-            //      _menu(context, Icons.auto_awesome, t.aiInsights, 10, isDark),
-              _menu(context, Icons.settings, t.settingsMenu, 11, isDark),
+                  _menu(context, Icons.settings, t.settingsMenu, 10, isDark),
                 ],
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _sectionTitle(String title, bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1,
-          color: isDark
-              ? Colors.white.withOpacity(0.5)
-              : Colors.black54,
-        ),
       ),
     );
   }
@@ -93,69 +74,44 @@ class SidebarMenu extends StatelessWidget {
       ) {
     final isSelected = selectedIndex == index;
     final primary = Color(0xFF4CAF50);
-    final textColor = isDark ? Colors.white : Colors.black87;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Material(
-        color: isSelected
-            ? (isDark
-            ? Colors.white.withOpacity(0.08)
-            : primary.withOpacity(0.1))
-            : Colors.transparent,
+        color: isSelected ? primary : Colors.transparent,  // Poora background green
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           onTap: () {
-            if (index == 7) { // Analytics ka index 7 hai
-              // Full screen analytics page open karein
+            if (index == 9) {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) =>AnalyticsScreen(),
+                  builder: (context) => AnalyticsScreen(),
                 ),
               );
             } else {
-              // Normal menu selection
               onMenuSelected(index);
             }
           },
           borderRadius: BorderRadius.circular(10),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: isSelected
-                ? BoxDecoration(
-              border: Border(
-                left: BorderSide(color: primary, width: 3),
-              ),
-            )
-                : null,
             child: Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? primary
-                        : Colors.white.withOpacity(isDark ? 0.08 : 1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    icon,
-                    size: 20,
-                    color: isSelected
-                        ? Colors.white
-                        : (isDark ? Colors.white : Colors.black),
-                  ),
+                Icon(
+                  icon,
+                  size: 22,
+                  color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black54),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     label,
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight:
-                      isSelected ? FontWeight.w600 : FontWeight.normal,
-                      color: textColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,  // Bold text
+                      color: isSelected
+                          ? Colors.white  // Selected = white text
+                          : Colors.black87,  // Not selected = dark black
                     ),
                   ),
                 ),

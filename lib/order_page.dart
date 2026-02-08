@@ -780,8 +780,9 @@ class _OrdersPageFinalState extends State<OrdersPageFinal> {
             child: Text(
               label,
               style: const TextStyle(
-                color: Colors.grey,
+                color: Colors.black87,  // Dark black color
                 fontSize: 14,
+                fontWeight: FontWeight.bold,  // Bold text
               ),
             ),
           ),
