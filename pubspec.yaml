@@ -11,8 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
   google_maps_flutter: ^2.6.0
-  flutter_map: ^8.0.0
-  latlong2: ^0.9.1
 
   flutter_localizations:
     sdk: flutter
@@ -31,15 +29,10 @@ dependencies:
   csv: ^6.0.0
   path_provider: ^2.1.2
   share_plus: ^10.1.0
-<<<<<<< HEAD
   mongo_dart: ^0.10.6
-
-=======
   font_awesome_flutter:
   flutter_map:
   latlong2:
->>>>>>> 562bf1a (Updated project files)
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

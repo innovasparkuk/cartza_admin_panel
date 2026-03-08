@@ -115,7 +115,7 @@ class _loginState extends State<login> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset("assets/images/download.png", height: 22),
+              Image.asset("assets/images/download.jpeg", height: 22),
              const SizedBox(width: 14),
               const Text(
                 "Continue with Google",

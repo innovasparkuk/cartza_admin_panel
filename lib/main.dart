@@ -71,7 +71,7 @@ class ShopEaseAdminApp extends StatelessWidget {
       themeMode:
       themeProvider.isDark ? ThemeMode.dark : ThemeMode.light,
 
-      home: login(),
+      home: DashboardPage(),
     );
   }
 }
