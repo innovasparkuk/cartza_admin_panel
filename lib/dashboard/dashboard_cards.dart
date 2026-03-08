@@ -21,19 +21,15 @@ class DashboardCards extends StatelessWidget {
           dashboard.totalUsers.toString(),
           theme.colorScheme.primary,
         ),
-
         const SizedBox(width: 16),
-
         _buildCard(
           context,
           Icons.shopping_cart,
           t.totalOrders,
-          dashboard.totalOrders.toString(),
+          dashboard.totalOrders.toString(), // ✅ now always real count
           Colors.orange,
         ),
-
         const SizedBox(width: 16),
-
         _buildCard(
           context,
           Icons.currency_rupee,
@@ -41,9 +37,7 @@ class DashboardCards extends StatelessWidget {
           '₹${_formatRevenue(dashboard.totalRevenue)}',
           Colors.green,
         ),
-
         const SizedBox(width: 16),
-
         _buildCard(
           context,
           Icons.inventory,
@@ -55,25 +49,15 @@ class DashboardCards extends StatelessWidget {
     );
   }
 
-  // ✅ Helper method to format revenue nicely
   String _formatRevenue(double revenue) {
-    if (revenue >= 10000000) {
-      return '${(revenue / 10000000).toStringAsFixed(2)}Cr';
-    } else if (revenue >= 100000) {
-      return '${(revenue / 100000).toStringAsFixed(2)}L';
-    } else if (revenue >= 1000) {
-      return '${(revenue / 1000).toStringAsFixed(2)}K';
-    }
+    if (revenue >= 10000000) return '${(revenue / 10000000).toStringAsFixed(2)}Cr';
+    if (revenue >= 100000) return '${(revenue / 100000).toStringAsFixed(2)}L';
+    if (revenue >= 1000) return '${(revenue / 1000).toStringAsFixed(2)}K';
     return revenue.toStringAsFixed(2);
   }
 
-  Widget _buildCard(
-      BuildContext context,
-      IconData icon,
-      String title,
-      String value,
-      Color color,
-      ) {
+  Widget _buildCard(BuildContext context, IconData icon, String title,
+      String value, Color color) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -98,19 +82,12 @@ class DashboardCards extends StatelessWidget {
               ),
               child: Icon(icon, color: color),
             ),
-
             const SizedBox(height: 20),
-
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 8),
-
             Text(
               title,
               style: TextStyle(

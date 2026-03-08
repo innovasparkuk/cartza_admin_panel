@@ -28,6 +28,7 @@ class _FlashSalesPageState extends State<FlashSalesPage> {
 
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
         title: Text(t.flashSales),
         backgroundColor:
         isDark ? theme.colorScheme.surface : const Color(0xFF4CAF50),

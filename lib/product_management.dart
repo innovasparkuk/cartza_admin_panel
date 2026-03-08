@@ -5,7 +5,7 @@ import 'admin_provider.dart';
 import '../models/product.dart';
 import '../product_form.dart';
 import 'stock_management.dart';
-
+import 'review.dart';
 class ProductManagementPage extends StatefulWidget {
   const ProductManagementPage({super.key});
 
@@ -23,42 +23,89 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       context.read<AdminProvider>().loadProducts();
     });
   }
+  void _openProductReviews(Product product) {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (_) => ReviewsPage(
+        productId: product.id,
+        productName: product.name,
+      ),
+    ));
+  }
 
+  void _openAllReviews() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (_) => const ReviewsPage()));
+  }
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AdminProvider>();
     final isMobile = MediaQuery.of(context).size.width < 800;
+    Widget _actionButton({
+      required IconData icon,
+      required String label,
+      required Color color,
+      required VoidCallback onTap,
+    }) {
+      return ElevatedButton.icon(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          elevation: 0,
+        ),
+        icon: Icon(icon, size: 18),
+        label: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+      );
+    }
 
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: const Color(0xFF4CAF50),
-        title: const Text('Product Management'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.inventory),
-            tooltip: 'Stock Management',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const StockManagementPage(),
-                ),
-              );
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'Add Product',
-            onPressed: () => _showProductForm(),
-          ),
-        ],
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Product Management',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 4),
+                    Text('Manage your products',
+                        style: TextStyle(color: Colors.grey, fontSize: 14)),
+                  ],
+                ),
+                Row(
+                  children: [
+                    _actionButton(
+                      icon: Icons.rate_review_rounded,
+                      label: 'Reviews',
+                      color: const Color(0xFFFF6B35),
+                      onTap: _openAllReviews,
+                    ),
+                    const SizedBox(width: 8),
+                    _actionButton(
+                      icon: Icons.inventory,
+                      label: 'Stock',
+                      color: const Color(0xFF2196F3),
+                      onTap: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => const StockManagementPage())),
+                    ),
+                    const SizedBox(width: 8),
+                    _actionButton(
+                      icon: Icons.add,
+                      label: 'Add Product',
+                      color: const Color(0xFF4CAF50),
+                      onTap: () => _showProductForm(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
             _buildSearchFilterSection(provider),
             const SizedBox(height: 16),
             Expanded(
@@ -185,6 +232,12 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                         icon: const Icon(Icons.delete,
                             size: 18, color: Colors.red),
                         onPressed: () => _confirmDelete(product),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.rate_review_rounded,
+                            size: 18, color: Color(0xFFFF6B35)),
+                        tooltip: 'View Reviews',
+                        onPressed: () => _openProductReviews(product),
                       ),
                     ],
                   ),

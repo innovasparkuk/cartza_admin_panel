@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shopease_admin/dashboard/dashboard_page.dart';
 import 'package:http/http.dart' as http;
 import 'signup.dart';
 import 'terms.dart';
-import 'userdashboard.dart';
-import 'forgetpassword.dart';
-
+import 'forgotpassword.dart';
 class login extends StatefulWidget {
   const login({super.key});
 
@@ -64,6 +63,7 @@ class _loginState extends State<login> {
     }
   }
 
+
   void _loginUser() async {
     if (!_acceptTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -88,7 +88,7 @@ class _loginState extends State<login> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => UserDashboard()),
+          MaterialPageRoute(builder: (_) =>DashboardPage()),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,7 +116,7 @@ class _loginState extends State<login> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset("assets/images/download.png", height: 22),
-              const SizedBox(width: 14),
+             const SizedBox(width: 14),
               const Text(
                 "Continue with Google",
                 style: TextStyle(

@@ -36,6 +36,18 @@ class SidebarMenu extends StatelessWidget {
                   ? "assets/images/456.png"
                   : "assets/images/123.png",
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: isDark ? Colors.grey.shade900 : Colors.grey.shade200,
+                  child: Center(
+                    child: Icon(
+                      Icons.store,
+                      size: 80,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
 
@@ -78,7 +90,7 @@ class SidebarMenu extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Material(
-        color: isSelected ? primary : Colors.transparent,  // Poora background green
+        color: isSelected ? primary : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           onTap: () {
@@ -108,10 +120,10 @@ class SidebarMenu extends StatelessWidget {
                     label,
                     style: TextStyle(
                       fontSize: 15,
-                      fontWeight: FontWeight.bold,  // Bold text
+                      fontWeight: FontWeight.bold,
                       color: isSelected
-                          ? Colors.white  // Selected = white text
-                          : Colors.black87,  // Not selected = dark black
+                          ? Colors.white
+                          : (isDark ? Colors.white70 : Colors.black87),
                     ),
                   ),
                 ),

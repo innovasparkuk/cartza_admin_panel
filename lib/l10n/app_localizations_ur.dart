@@ -9,6 +9,9 @@ class AppLocalizationsUr extends AppLocalizations {
   AppLocalizationsUr([String locale = 'ur']) : super(locale);
 
   @override
+  String get appTitle => 'شاپ ایز ایڈمن';
+
+  @override
   String get search => 'تلاش کریں';
 
   @override
@@ -33,7 +36,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get salesTrends => 'فروخت کے رجحانات';
 
   @override
-  String get analyticsMenu => 'Analytics';
+  String get analyticsMenu => 'تجزیہ';
 
   @override
   String get last7Days => 'آخری 7 دن';
@@ -42,7 +45,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get revenueGrowthOverTime => 'آمدنی میں وقت کے ساتھ اضافہ';
 
   @override
-  String get topCategories => 'اہم زمروں';
+  String get topCategories => 'اہم زمرے';
 
   @override
   String get salesDistributionByCategory =>
@@ -112,13 +115,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get ordersMenu => 'آرڈرز';
 
   @override
-  String get customersMenu => 'Customers';
+  String get customersMenu => 'صارفین';
 
   @override
-  String get paymentsMenu => 'Payments';
+  String get paymentsMenu => 'ادائیگیاں';
 
   @override
-  String get reviewsMenu => 'Reviews';
+  String get reviewsMenu => 'جائزے';
 
   @override
   String get productsMenu => 'مصنوعات';
@@ -130,7 +133,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get cmsMenu => 'سی ایم ایس';
 
   @override
-  String get promotionsMenu => 'پروڈیشنز';
+  String get promotionsMenu => 'پروموشنز';
 
   @override
   String get analyticsSection => 'تجزیہ';
@@ -139,7 +142,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get reportsMenu => 'رپورٹس';
 
   @override
-  String get insights => 'ان سائٹس';
+  String get insights => 'بصیرتیں';
 
   @override
   String get systemSection => 'سسٹم';
@@ -241,7 +244,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get cancelled => 'منسوخ';
 
   @override
-  String get processing => 'پراسیس ہو رہا ہے';
+  String get processing => 'پروسس ہو رہا ہے';
 
   @override
   String get shipped => 'بھیج دیا گیا';
@@ -383,7 +386,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get flashSales => 'فلیش سیلز';
 
   @override
-  String get promotionsDiscounts => 'پروڈیشنز اور چھوٹیں';
+  String get promotionsDiscounts => 'پروموشنز اور چھوٹیں';
 
   @override
   String get addProduct => 'مصنوعہ شامل کریں';
@@ -488,16 +491,16 @@ class AppLocalizationsUr extends AppLocalizations {
   String get productRecommendations => 'مصنوعات کی سفارشات';
 
   @override
-  String get salesAnalysis => 'سیلز تجزیہ';
+  String get salesAnalysis => 'سیلز کا تجزیہ';
 
   @override
-  String get marketingStrategy => 'مارکیٹنگ اسٹریٹیجی';
+  String get marketingStrategy => 'مارکیٹنگ کی حکمت عملی';
 
   @override
-  String get customerInsights => 'کسٹمر بصیرتیں';
+  String get customerInsights => 'صارفین کے بارے میں بصیرتیں';
 
   @override
-  String get inventoryOptimization => 'انوینٹری اصلاح';
+  String get inventoryOptimization => 'انوینٹری کی بہتری';
 
   @override
   String get usingFreeAiProxies => 'مفت عوامی AI پراکسیز استعمال کر رہے ہیں';
@@ -539,7 +542,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get temporaryIssue => 'AI سروس میں عارضی مسئلہ';
 
   @override
-  String get fallbackRecommendations => 'بیک اپ سفارشات';
+  String get fallbackRecommendations => 'متبادل سفارشات';
 
   @override
   String get aiPoweredInsights => 'AI سے چلنے والی بصیرتیں';
@@ -551,11 +554,306 @@ class AppLocalizationsUr extends AppLocalizations {
   String get analyzeSalesData => 'سیلز ڈیٹا کا تجزیہ کریں';
 
   @override
-  String get generateAdCopy => 'اشتہاری کاپی بنائیں';
+  String get generateAdCopy => 'اشتہار کی کاپی بنائیں';
 
   @override
-  String get analyzeCustomerBehavior => 'کسٹمر رویے کا تجزیہ کریں';
+  String get analyzeCustomerBehavior => 'صارفین کے رویے کا تجزیہ کریں';
 
   @override
-  String get optimizeInventoryLevels => 'انوینٹری لیولز کو بہتر بنائیں';
+  String get optimizeInventoryLevels => 'انوینٹری کی سطحوں کو بہتر بنائیں';
+
+  @override
+  String get orderId => 'آرڈر آئی ڈی';
+
+  @override
+  String get customer => 'صارف';
+
+  @override
+  String get items => 'اشیاء';
+
+  @override
+  String get amount => 'رقم';
+
+  @override
+  String get orderAge => 'آرڈر کی عمر';
+
+  @override
+  String get status => 'حالت';
+
+  @override
+  String get viewDetails => 'تفصیلات دیکھیں';
+
+  @override
+  String get changeStatus => 'حالت تبدیل کریں';
+
+  @override
+  String get deleteOrder => 'آرڈر حذف کریں';
+
+  @override
+  String get orderDetails => 'آرڈر کی تفصیلات';
+
+  @override
+  String get email => 'ای میل';
+
+  @override
+  String get phone => 'فون';
+
+  @override
+  String get address => 'پتہ';
+
+  @override
+  String get paymentMethod => 'ادائیگی کا طریقہ';
+
+  @override
+  String get date => 'تاریخ';
+
+  @override
+  String get totalItems => 'کل اشیاء';
+
+  @override
+  String get products => 'مصنوعات';
+
+  @override
+  String get totalAmount => 'کل رقم';
+
+  @override
+  String get updateStatus => 'حالت اپ ڈیٹ کریں';
+
+  @override
+  String get areYouSureDeleteOrder => 'کیا آپ واقعی آرڈر حذف کرنا چاہتے ہیں';
+
+  @override
+  String get orderStatusUpdated => 'آرڈر کی حالت اپ ڈیٹ ہو گئی';
+
+  @override
+  String get orderDeleted => 'آرڈر کامیابی سے حذف ہو گیا';
+
+  @override
+  String get errorLoadingOrders => 'آرڈرز لوڈ کرنے میں خرابی';
+
+  @override
+  String get errorUpdatingStatus => 'حالت اپ ڈیٹ کرنے میں خرابی';
+
+  @override
+  String get errorDeletingOrder => 'آرڈر حذف کرنے میں خرابی';
+
+  @override
+  String get noOrdersFound => 'کوئی آرڈر نہیں ملا';
+
+  @override
+  String get searchOrdersByIdOrCustomer =>
+      'آرڈر آئی ڈی یا صارف سے تلاش کریں...';
+
+  @override
+  String get customerManagement => 'صارفین کا انتظام';
+
+  @override
+  String get totalCustomers => 'کل صارفین';
+
+  @override
+  String get activeCustomers => 'فعال';
+
+  @override
+  String get inactiveCustomers => 'غیر فعال';
+
+  @override
+  String get blockedCustomers => 'مسدود';
+
+  @override
+  String get searchCustomers => 'صارفین تلاش کریں...';
+
+  @override
+  String get noCustomersFound => 'کوئی صارف نہیں ملا';
+
+  @override
+  String get customerDetails => 'صارف کی تفصیلات';
+
+  @override
+  String get joinDate => 'شامل ہونے کی تاریخ';
+
+  @override
+  String get customerAge => 'صارف کی عمر';
+
+  @override
+  String get lastActive => 'آخری فعالیت';
+
+  @override
+  String get customerTimeline => 'صارف کا ٹائم لائن';
+
+  @override
+  String get joined => 'شامل ہوا';
+
+  @override
+  String get ordersPlaced => 'آرڈرز کیے';
+
+  @override
+  String get unblockCustomer => 'صارف کو غیر مسدود کریں';
+
+  @override
+  String get blockCustomer => 'صارف کو مسدود کریں';
+
+  @override
+  String get sendPromotion => 'پروموشن بھیجیں';
+
+  @override
+  String get promotionSent => 'پروموشن بھیج دی گئی';
+
+  @override
+  String get customerBlocked => 'صارف کامیابی سے مسدود ہو گیا';
+
+  @override
+  String get customerUnblocked => 'صارف کامیابی سے غیر مسدود ہو گیا';
+
+  @override
+  String get errorLoadingCustomers => 'صارفین لوڈ کرنے میں خرابی';
+
+  @override
+  String get sendPromotionalEmail => 'پروموشنل ای میل بھیجیں';
+
+  @override
+  String get areYouSure => 'کیا آپ کو یقین ہے؟';
+
+  @override
+  String get confirmBlock => 'مسدود کرنے کی تصدیق کریں';
+
+  @override
+  String get confirmUnblock => 'غیر مسدود کرنے کی تصدیق کریں';
+
+  @override
+  String get productManagement => 'مصنوعات کا انتظام';
+
+  @override
+  String get stockManagement => 'اسٹاک کا انتظام';
+
+  @override
+  String get searchProducts => 'مصنوعات تلاش کریں';
+
+  @override
+  String get noProductsFound => 'کوئی مصنوعات نہیں ملی';
+
+  @override
+  String get image => 'تصویر';
+
+  @override
+  String get name => 'نام';
+
+  @override
+  String get description => 'تفصیل';
+
+  @override
+  String get stock => 'اسٹاک';
+
+  @override
+  String get actions => 'اعمال';
+
+  @override
+  String get noDescription => 'کوئی تفصیل نہیں';
+
+  @override
+  String get deleteProduct => 'مصنوعہ حذف کریں';
+
+  @override
+  String get deleteProductConfirmation => 'حذف کریں';
+
+  @override
+  String get productDeleted => 'مصنوعہ حذف ہو گئی';
+
+  @override
+  String get productUpdated => 'مصنوعہ اپ ڈیٹ ہو گئی';
+
+  @override
+  String get productAdded => 'مصنوعہ شامل ہو گئی';
+
+  @override
+  String get bulkUpload => 'بلک اپ لوڈ';
+
+  @override
+  String get csvUploadComingSoon => 'CSV اپ لوڈ جلد آرہا ہے';
+
+  @override
+  String get categoryManagement => 'اقسام کا انتظام';
+
+  @override
+  String get manageProductCategories => 'اپنی مصنوعات کی اقسام کا انتظام کریں';
+
+  @override
+  String get totalCategories => 'کل اقسام';
+
+  @override
+  String get totalProducts => 'کل مصنوعات';
+
+  @override
+  String get allCategories => 'تمام اقسام';
+
+  @override
+  String get addNewCategory => 'نئی قسم شامل کریں';
+
+  @override
+  String get categoryName => 'قسم کا نام';
+
+  @override
+  String get subcategoryName => 'ذیلی قسم کا نام';
+
+  @override
+  String get productCount => 'مصنوعات کی تعداد';
+
+  @override
+  String get imageSource => 'تصویر کا ماخذ';
+
+  @override
+  String get url => 'یو آر ایل';
+
+  @override
+  String get system => 'سسٹم';
+
+  @override
+  String get imageUrl => 'تصویر کا URL';
+
+  @override
+  String get assetsFolder => 'اثاثے فولڈر';
+
+  @override
+  String get gallery => 'گیلری';
+
+  @override
+  String get selectImageFromAssets => 'اثاثوں سے تصویر منتخب کریں';
+
+  @override
+  String get enter => 'درج کریں';
+
+  @override
+  String get pleaseEnter => 'براہ کرم درج کریں';
+
+  @override
+  String get validNumber => 'براہ کرم ایک درست نمبر درج کریں';
+
+  @override
+  String get addSubcategory => 'ذیلی قسم شامل کریں';
+
+  @override
+  String get confirmDelete => 'تصدیق کریں؟';
+
+  @override
+  String get sub => 'ذیلی';
+
+  @override
+  String get imageUploaded => 'تصویر کامیابی سے اپ لوڈ ہو گئی';
+
+  @override
+  String get imageUploadFailed => 'تصویر اپ لوڈ ناکام';
+
+  @override
+  String get categoryUpdated => 'قسم اپ ڈیٹ ہو گئی!';
+
+  @override
+  String get categoryAdded => 'قسم شامل ہو گئی!';
+
+  @override
+  String get subcategoryAdded => 'ذیلی قسم کامیابی سے شامل ہو گئی!';
+
+  @override
+  String get categoryDeleted => 'قسم کامیابی سے حذف ہو گئی!';
+
+  @override
+  String get pleaseEnterSubcategoryName => 'براہ کرم ذیلی قسم کا نام درج کریں';
 }

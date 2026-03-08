@@ -7,6 +7,7 @@ import 'package:shopease_admin/coupon_provider.dart';
 import 'package:shopease_admin/dashboard/dashboard_page.dart';
 import 'package:shopease_admin/dashboard_provider.dart';
 import 'package:shopease_admin/flash_sale_provider.dart';
+import 'package:shopease_admin/login.dart';
 import 'package:shopease_admin/product_form.dart';
 import 'package:shopease_admin/product_management.dart';
 import 'package:shopease_admin/BannerProvider.dart';
@@ -70,7 +71,7 @@ class ShopEaseAdminApp extends StatelessWidget {
       themeMode:
       themeProvider.isDark ? ThemeMode.dark : ThemeMode.light,
 
-      home: DashboardPage(),
+      home: login(),
     );
   }
 }

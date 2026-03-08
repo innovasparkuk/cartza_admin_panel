@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:cartza_login/terms.dart';
+import 'terms.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

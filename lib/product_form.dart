@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../category_provider.dart';
-
+import 'package:shopease_admin/l10n/app_localizations.dart';
 class ProductForm extends StatefulWidget {
   final Product? product;
   final Function(Product, Uint8List?) onSave;

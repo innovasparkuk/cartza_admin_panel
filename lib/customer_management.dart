@@ -97,15 +97,27 @@ class _CustomerManagementDashboardState
   }
 
   void sendPromotion(Customer customer) {
+    final theme = Theme.of(context);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Send Promotion'),
-        content: Text('Send promotional email to ${customer.name}?'),
+        backgroundColor: theme.dialogBackgroundColor,
+        title: Text(
+          'Send Promotion',
+          style: theme.textTheme.titleLarge,
+        ),
+        content: Text(
+          'Send promotional email to ${customer.name}?',
+          style: theme.textTheme.bodyMedium,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: theme.primaryColor),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -129,12 +141,15 @@ class _CustomerManagementDashboardState
   }
 
   void _showCustomerDetailsDialog(Customer customer) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final customerAge = _calculateAge(customer.joinDate);
     final lastActiveText = _timeAgo(customer.lastActive);
 
     showDialog(
       context: context,
       builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
           width: 750,
@@ -144,7 +159,12 @@ class _CustomerManagementDashboardState
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
+              colors: isDark
+                  ? [
+                const Color(0xFF1E1E1E),
+                const Color(0xFF2D2D2D).withOpacity(0.3),
+              ]
+                  : [
                 Colors.white,
                 Colors.green.shade50.withOpacity(0.3),
               ],
@@ -158,10 +178,9 @@ class _CustomerManagementDashboardState
                 padding: const EdgeInsets.all(30),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      Colors.green.shade600,
-                      Colors.green.shade400,
-                    ],
+                    colors: isDark
+                        ? [Colors.green.shade800, Colors.green.shade700]
+                        : [Colors.green.shade600, Colors.green.shade400],
                   ),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
@@ -204,11 +223,11 @@ class _CustomerManagementDashboardState
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: theme.cardColor,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.green.withOpacity(0.1),
+                              color: isDark ? Colors.transparent : Colors.green.withOpacity(0.1),
                               blurRadius: 20,
                               offset: const Offset(0, 4),
                             ),
@@ -222,10 +241,9 @@ class _CustomerManagementDashboardState
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 gradient: LinearGradient(
-                                  colors: [
-                                    Colors.green.shade400,
-                                    Colors.green.shade600,
-                                  ],
+                                  colors: isDark
+                                      ? [Colors.green.shade700, Colors.green.shade800]
+                                      : [Colors.green.shade400, Colors.green.shade600],
                                 ),
                               ),
                               child: CircleAvatar(
@@ -233,13 +251,13 @@ class _CustomerManagementDashboardState
                                 backgroundColor: Colors.white,
                                 child: CircleAvatar(
                                   radius: 42,
-                                  backgroundColor: Colors.green.shade100,
+                                  backgroundColor: isDark ? Colors.grey.shade800 : Colors.green.shade100,
                                   child: Text(
                                     customer.name[0].toUpperCase(),
                                     style: TextStyle(
                                       fontSize: 36,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.green.shade700,
+                                      color: isDark ? Colors.green.shade300 : Colors.green.shade700,
                                     ),
                                   ),
                                 ),
@@ -252,23 +270,20 @@ class _CustomerManagementDashboardState
                                 children: [
                                   Text(
                                     customer.name,
-                                    style: const TextStyle(
+                                    style: theme.textTheme.titleLarge?.copyWith(
                                       fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
                                     ),
                                   ),
                                   const SizedBox(height: 6),
                                   Row(
                                     children: [
                                       Icon(Icons.email,
-                                          size: 16, color: Colors.grey.shade600),
+                                          size: 16, color: theme.iconTheme.color?.withOpacity(0.6)),
                                       const SizedBox(width: 6),
                                       Text(
                                         customer.email,
-                                        style: TextStyle(
-                                          color: Colors.grey.shade700,
-                                          fontSize: 14,
+                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                          color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                                         ),
                                       ),
                                     ],
@@ -277,13 +292,12 @@ class _CustomerManagementDashboardState
                                   Row(
                                     children: [
                                       Icon(Icons.phone,
-                                          size: 16, color: Colors.grey.shade600),
+                                          size: 16, color: theme.iconTheme.color?.withOpacity(0.6)),
                                       const SizedBox(width: 6),
                                       Text(
                                         customer.phone,
-                                        style: TextStyle(
-                                          color: Colors.grey.shade700,
-                                          fontSize: 14,
+                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                          color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                                         ),
                                       ),
                                     ],
@@ -296,12 +310,12 @@ class _CustomerManagementDashboardState
                                   horizontal: 20, vertical: 10),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: _getStatusGradient(customer.status),
+                                  colors: _getStatusGradient(customer.status, isDark),
                                 ),
                                 borderRadius: BorderRadius.circular(25),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: _getStatusColor(customer.status)
+                                    color: _getStatusColor(customer.status, theme)
                                         .withOpacity(0.3),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
@@ -323,7 +337,7 @@ class _CustomerManagementDashboardState
 
                       const SizedBox(height: 24),
 
-                      // Stats Grid with improved design
+                      // Stats Grid
                       GridView.count(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -337,55 +351,60 @@ class _CustomerManagementDashboardState
                             customer.id,
                             Icons.badge_outlined,
                             Colors.blue,
+                            theme,
                           ),
                           _buildImprovedStatCard(
                             'Total Orders',
                             customer.totalOrders.toString(),
                             Icons.shopping_cart_outlined,
                             Colors.green,
+                            theme,
                           ),
                           _buildImprovedStatCard(
                             'Join Date',
                             '${customer.joinDate.day}/${customer.joinDate.month}/${customer.joinDate.year}',
                             Icons.calendar_today_outlined,
                             Colors.orange,
+                            theme,
                           ),
                           _buildImprovedStatCard(
                             'Customer Age',
                             customerAge,
                             Icons.access_time_outlined,
                             Colors.purple,
+                            theme,
                           ),
                           _buildImprovedStatCard(
                             'Last Active',
                             lastActiveText,
                             Icons.update,
                             Colors.teal,
+                            theme,
                           ),
                           _buildImprovedStatCard(
                             'Status',
                             customer.status.label,
                             Icons.check_circle_outline,
-                            _getStatusColor(customer.status),
+                            _getStatusColor(customer.status, theme),
+                            theme,
                           ),
                         ],
                       ),
 
                       const SizedBox(height: 24),
 
-                      // Timeline Section with gradient
+                      // Timeline Section
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [
-                              Colors.green.shade50,
-                              Colors.blue.shade50,
-                            ],
+                            colors: isDark
+                                ? [Colors.green.shade900.withOpacity(0.3), Colors.blue.shade900.withOpacity(0.3)]
+                                : [Colors.green.shade50, Colors.blue.shade50],
                           ),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: Colors.green.shade200,
+                            color: isDark ? Colors.green.shade800 : Colors.green.shade200,
                             width: 1,
                           ),
                         ),
@@ -395,15 +414,11 @@ class _CustomerManagementDashboardState
                             Row(
                               children: [
                                 Icon(Icons.timeline,
-                                    color: Colors.green.shade700, size: 22),
+                                    color: isDark ? Colors.green.shade300 : Colors.green.shade700, size: 22),
                                 const SizedBox(width: 8),
-                                const Text(
+                                Text(
                                   'Customer Timeline',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
+                                  style: theme.textTheme.titleMedium,
                                 ),
                               ],
                             ),
@@ -413,18 +428,21 @@ class _CustomerManagementDashboardState
                               '${customer.joinDate.day}/${customer.joinDate.month}/${customer.joinDate.year}',
                               Icons.person_add_outlined,
                               Colors.green,
+                              theme,
                             ),
                             _buildImprovedTimelineItem(
                               'Last Active',
                               lastActiveText,
                               Icons.access_time_filled,
                               Colors.blue,
+                              theme,
                             ),
                             _buildImprovedTimelineItem(
                               'Total Orders',
                               '${customer.totalOrders} orders placed',
                               Icons.shopping_bag_outlined,
                               Colors.orange,
+                              theme,
                               isLast: true,
                             ),
                           ],
@@ -435,11 +453,11 @@ class _CustomerManagementDashboardState
                 ),
               ),
 
-              // Action Buttons with gradient
+              // Action Buttons
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
+                  color: theme.cardColor,
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
@@ -551,16 +569,18 @@ class _CustomerManagementDashboardState
   }
 
   Widget _buildImprovedStatCard(
-      String title, String value, IconData icon, Color color) {
+      String title, String value, IconData icon, Color color, ThemeData theme) {
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withOpacity(0.2), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: isDark ? Colors.transparent : color.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -589,19 +609,16 @@ class _CustomerManagementDashboardState
               children: [
                 Text(
                   title,
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 11,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Colors.black87,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -614,8 +631,10 @@ class _CustomerManagementDashboardState
   }
 
   Widget _buildImprovedTimelineItem(
-      String title, String value, IconData icon, Color color,
+      String title, String value, IconData icon, Color color, ThemeData theme,
       {bool isLast = false}) {
+    final isDark = theme.brightness == Brightness.dark;
+
     return Padding(
       padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
       child: Row(
@@ -626,10 +645,9 @@ class _CustomerManagementDashboardState
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      color.withOpacity(0.8),
-                      color,
-                    ],
+                    colors: isDark
+                        ? [color.withOpacity(0.8), color.withOpacity(0.6)]
+                        : [color.withOpacity(0.8), color],
                   ),
                   shape: BoxShape.circle,
                   boxShadow: [
@@ -651,10 +669,9 @@ class _CustomerManagementDashboardState
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                        color.withOpacity(0.5),
-                        color.withOpacity(0.1),
-                      ],
+                      colors: isDark
+                          ? [color.withOpacity(0.5), color.withOpacity(0.1)]
+                          : [color.withOpacity(0.5), color.withOpacity(0.1)],
                     ),
                   ),
                 ),
@@ -665,7 +682,7 @@ class _CustomerManagementDashboardState
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: theme.cardColor,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: color.withOpacity(0.2),
@@ -677,19 +694,16 @@ class _CustomerManagementDashboardState
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     value,
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
                     ),
                   ),
                 ],
@@ -701,14 +715,20 @@ class _CustomerManagementDashboardState
     );
   }
 
-  List<Color> _getStatusGradient(CustomerStatus status) {
+  List<Color> _getStatusGradient(CustomerStatus status, bool isDark) {
     switch (status) {
       case CustomerStatus.active:
-        return [Colors.green.shade400, Colors.green.shade600];
+        return isDark
+            ? [Colors.green.shade700, Colors.green.shade800]
+            : [Colors.green.shade400, Colors.green.shade600];
       case CustomerStatus.inactive:
-        return [Colors.orange.shade400, Colors.orange.shade600];
+        return isDark
+            ? [Colors.orange.shade700, Colors.orange.shade800]
+            : [Colors.orange.shade400, Colors.orange.shade600];
       case CustomerStatus.blocked:
-        return [Colors.red.shade400, Colors.red.shade600];
+        return isDark
+            ? [Colors.red.shade700, Colors.red.shade800]
+            : [Colors.red.shade400, Colors.red.shade600];
     }
   }
 
@@ -723,15 +743,18 @@ class _CustomerManagementDashboardState
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     if (loading && customers.isEmpty) {
-      return const Scaffold(
-        backgroundColor: Color(0xFFF5F5F5),
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
           // Header - Fixed at top
@@ -739,20 +762,19 @@ class _CustomerManagementDashboardState
             height: 70,
             padding: const EdgeInsets.symmetric(horizontal: 30),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.appBarTheme.backgroundColor ?? theme.cardColor,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: isDark ? Colors.transparent : Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                 ),
               ],
             ),
             child: Row(
               children: [
-                const Text(
+                Text(
                   'Customer Management',
-                  style: TextStyle(
-                    color: Colors.black,
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
@@ -763,18 +785,20 @@ class _CustomerManagementDashboardState
                   height: 45,
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF5F5F5),
+                    color: theme.inputDecorationTheme.fillColor ?? theme.cardColor,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.search, color: Colors.grey),
+                      Icon(Icons.search, color: theme.iconTheme.color?.withOpacity(0.6)),
                       const SizedBox(width: 10),
                       Expanded(
                         child: TextField(
                           controller: searchController,
-                          decoration: const InputDecoration(
+                          style: theme.textTheme.bodyMedium,
+                          decoration: InputDecoration(
                             hintText: 'Search customers...',
+                            hintStyle: TextStyle(color: theme.hintColor),
                             border: InputBorder.none,
                           ),
                         ),
@@ -784,7 +808,7 @@ class _CustomerManagementDashboardState
                 ),
                 const SizedBox(width: 15),
                 IconButton(
-                  icon: const Icon(Icons.refresh, size: 28),
+                  icon: Icon(Icons.refresh, size: 28, color: theme.iconTheme.color),
                   onPressed: loadCustomers,
                 ),
               ],
@@ -807,6 +831,7 @@ class _CustomerManagementDashboardState
                           customers.length.toString(),
                           Icons.people,
                           Colors.blue,
+                          theme,
                         ),
                       ),
                       const SizedBox(width: 15),
@@ -816,6 +841,7 @@ class _CustomerManagementDashboardState
                           activeCustomers.toString(),
                           Icons.check_circle,
                           Colors.green,
+                          theme,
                         ),
                       ),
                       const SizedBox(width: 15),
@@ -825,6 +851,7 @@ class _CustomerManagementDashboardState
                           inactiveCustomers.toString(),
                           Icons.pending,
                           Colors.orange,
+                          theme,
                         ),
                       ),
                       const SizedBox(width: 15),
@@ -834,6 +861,7 @@ class _CustomerManagementDashboardState
                           blockedCustomers.toString(),
                           Icons.block,
                           Colors.red,
+                          theme,
                         ),
                       ),
                     ],
@@ -846,13 +874,13 @@ class _CustomerManagementDashboardState
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        _buildFilterChip('All'),
+                        _buildFilterChip('All', theme),
                         const SizedBox(width: 12),
-                        _buildFilterChip('Active'),
+                        _buildFilterChip('Active', theme),
                         const SizedBox(width: 12),
-                        _buildFilterChip('Inactive'),
+                        _buildFilterChip('Inactive', theme),
                         const SizedBox(width: 12),
-                        _buildFilterChip('Blocked'),
+                        _buildFilterChip('Blocked', theme),
                       ],
                     ),
                   ),
@@ -862,11 +890,11 @@ class _CustomerManagementDashboardState
                   // Customers List
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: isDark ? Colors.transparent : Colors.black.withOpacity(0.05),
                           blurRadius: 10,
                         ),
                       ],
@@ -878,13 +906,12 @@ class _CustomerManagementDashboardState
                         child: Column(
                           children: [
                             Icon(Icons.people_outline,
-                                size: 64, color: Colors.grey.shade300),
+                                size: 64, color: theme.iconTheme.color?.withOpacity(0.3)),
                             const SizedBox(height: 16),
                             Text(
                               'No customers found',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey.shade600,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
                               ),
                             ),
                           ],
@@ -897,10 +924,10 @@ class _CustomerManagementDashboardState
                       padding: const EdgeInsets.all(20),
                       itemCount: filteredCustomers.length,
                       separatorBuilder: (context, index) =>
-                      const Divider(height: 30),
+                          Divider(height: 30, color: theme.dividerColor),
                       itemBuilder: (context, index) {
                         final customer = filteredCustomers[index];
-                        return _buildCustomerCard(customer);
+                        return _buildCustomerCard(customer, theme);
                       },
                     ),
                   ),
@@ -914,15 +941,17 @@ class _CustomerManagementDashboardState
   }
 
   Widget _buildStatCard(
-      String title, String value, IconData icon, Color color) {
+      String title, String value, IconData icon, Color color, ThemeData theme) {
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: isDark ? Colors.transparent : Colors.black.withOpacity(0.05),
             blurRadius: 10,
           ),
         ],
@@ -944,16 +973,14 @@ class _CustomerManagementDashboardState
               children: [
                 Text(
                   value,
-                  style: const TextStyle(
-                    fontSize: 24,
+                  style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 13,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
                   ),
                 ),
               ],
@@ -964,7 +991,7 @@ class _CustomerManagementDashboardState
     );
   }
 
-  Widget _buildFilterChip(String label) {
+  Widget _buildFilterChip(String label, ThemeData theme) {
     final isSelected = selectedFilter == label;
     return InkWell(
       onTap: () {
@@ -976,13 +1003,13 @@ class _CustomerManagementDashboardState
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.green : Colors.grey.shade200,
+          color: isSelected ? Colors.green : theme.chipTheme.backgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black,
+            color: isSelected ? Colors.white : theme.textTheme.bodyMedium?.color,
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
@@ -991,28 +1018,29 @@ class _CustomerManagementDashboardState
     );
   }
 
-  Widget _buildCustomerCard(Customer customer) {
+  Widget _buildCustomerCard(Customer customer, ThemeData theme) {
     final age = _calculateAge(customer.joinDate);
+    final isDark = theme.brightness == Brightness.dark;
 
     return InkWell(
       onTap: () => _showCustomerDetailsDialog(customer),
       child: Container(
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: theme.dividerColor),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
             CircleAvatar(
               radius: 25,
-              backgroundColor: Colors.green.shade100,
+              backgroundColor: isDark ? Colors.green.shade900 : Colors.green.shade100,
               child: Text(
                 customer.name[0].toUpperCase(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  color: isDark ? Colors.green.shade300 : Colors.green,
                 ),
               ),
             ),
@@ -1024,17 +1052,15 @@ class _CustomerManagementDashboardState
                 children: [
                   Text(
                     customer.name,
-                    style: const TextStyle(
+                    style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
                     ),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     customer.email,
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
                     ),
                   ),
                 ],
@@ -1044,16 +1070,15 @@ class _CustomerManagementDashboardState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Phone',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 11,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
                     ),
                   ),
                   Text(
                     customer.phone,
-                    style: const TextStyle(fontSize: 12),
+                    style: theme.textTheme.bodyMedium,
                   ),
                 ],
               ),
@@ -1062,17 +1087,15 @@ class _CustomerManagementDashboardState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Total Orders',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 11,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
                     ),
                   ),
                   Text(
                     customer.totalOrders.toString(),
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -1083,17 +1106,15 @@ class _CustomerManagementDashboardState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Customer Age',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 11,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
                     ),
                   ),
                   Text(
                     age,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1103,13 +1124,13 @@ class _CustomerManagementDashboardState
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: _getStatusColor(customer.status).withOpacity(0.1),
+                color: _getStatusColor(customer.status, theme).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 customer.status.label,
                 style: TextStyle(
-                  color: _getStatusColor(customer.status),
+                  color: _getStatusColor(customer.status, theme),
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1117,7 +1138,8 @@ class _CustomerManagementDashboardState
             ),
             const SizedBox(width: 10),
             PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert),
+              icon: Icon(Icons.more_vert, color: theme.iconTheme.color),
+              color: theme.cardColor,
               onSelected: (value) {
                 if (value == 'view') {
                   _showCustomerDetailsDialog(customer);
@@ -1128,13 +1150,13 @@ class _CustomerManagementDashboardState
                 }
               },
               itemBuilder: (context) => [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'view',
                   child: Row(
                     children: [
-                      Icon(Icons.visibility, size: 18),
-                      SizedBox(width: 10),
-                      Text('View Details'),
+                      Icon(Icons.visibility, size: 18, color: theme.iconTheme.color),
+                      const SizedBox(width: 10),
+                      Text('View Details', style: theme.textTheme.bodyMedium),
                     ],
                   ),
                 ),
@@ -1147,21 +1169,25 @@ class _CustomerManagementDashboardState
                             ? Icons.check_circle
                             : Icons.block,
                         size: 18,
+                        color: customer.status == CustomerStatus.blocked ? Colors.green : Colors.red,
                       ),
                       const SizedBox(width: 10),
-                      Text(customer.status == CustomerStatus.blocked
-                          ? 'Unblock'
-                          : 'Block'),
+                      Text(
+                        customer.status == CustomerStatus.blocked
+                            ? 'Unblock'
+                            : 'Block',
+                        style: theme.textTheme.bodyMedium,
+                      ),
                     ],
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'promotion',
                   child: Row(
                     children: [
-                      Icon(Icons.email, size: 18),
-                      SizedBox(width: 10),
-                      Text('Send Promotion'),
+                      Icon(Icons.email, size: 18, color: theme.iconTheme.color),
+                      const SizedBox(width: 10),
+                      Text('Send Promotion', style: theme.textTheme.bodyMedium),
                     ],
                   ),
                 ),
@@ -1173,7 +1199,7 @@ class _CustomerManagementDashboardState
     );
   }
 
-  Color _getStatusColor(CustomerStatus status) {
+  Color _getStatusColor(CustomerStatus status, ThemeData theme) {
     switch (status) {
       case CustomerStatus.active:
         return Colors.green;

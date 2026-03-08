@@ -20,14 +20,9 @@ class DashboardProvider extends ChangeNotifier {
   List<Map<String, dynamic>> categoryStats = [];
   List<Product> topProducts = [];
 
-  // ✅ Store actual data
   List<CategoryModel> categories = [];
   List<Product> allProducts = [];
 
-  // ✅ UPDATE THIS WITH YOUR BACKEND URL
-  // For Android Emulator: http://10.0.2.2:3000/api
-  // For Real Device: http://YOUR_IP_ADDRESS:3000/api
-  // For Web/Desktop: http://localhost:3000/api
   final String baseUrl = 'http://localhost:3000/api';
 
   Future<void> loadDashboardData() async {
@@ -40,12 +35,12 @@ class DashboardProvider extends ChangeNotifier {
         _fetchCategories(),
         _fetchProducts(),
         _fetchDashboardSummary(),
+        _fetchOrderCount(), // ✅ directly counts real orders
         _fetchSalesTrend(),
         _fetchUserGrowth(),
         _fetchTopProducts(),
         _fetchCategoryStats(),
       ]);
-
     } catch (e) {
       error = 'Failed to load dashboard data: $e';
       debugPrint('Dashboard error: $e');
@@ -55,13 +50,21 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ✅ Fetch categories for local calculations
+  // ✅ Orders page calls this — directly sets count without backend dependency
+  void updateOrderCount(int count) {
+    totalOrders = count;
+    notifyListeners();
+  }
+
+  // ✅ Also kept for backward compat — but updateOrderCount is more reliable
+  Future<void> refreshOrderCount() async {
+    await _fetchDashboardSummary();
+    notifyListeners();
+  }
+
   Future<void> _fetchCategories() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/categories'),
-      );
-
+      final response = await http.get(Uri.parse('$baseUrl/categories'));
       if (response.statusCode == 200) {
         final List<dynamic> list = jsonDecode(response.body);
         categories = list.map((e) => CategoryModel.fromJson(e)).toList();
@@ -72,13 +75,9 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  // ✅ Fetch all products for local calculations
   Future<void> _fetchProducts() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/products'),
-      );
-
+      final response = await http.get(Uri.parse('$baseUrl/products'));
       if (response.statusCode == 200) {
         final List<dynamic> list = jsonDecode(response.body);
         allProducts = list.map((e) => Product.fromJson(e)).toList();
@@ -89,37 +88,40 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  // ✅ NEW: Fetch dashboard summary from backend
   Future<void> _fetchDashboardSummary() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/dashboard/summary'),
-      );
-
+      final response = await http.get(Uri.parse('$baseUrl/dashboard/summary'));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         activeProducts = data['activeProducts'] ?? 0;
         totalUsers = data['totalUsers'] ?? 0;
-        totalOrders = data['totalOrders'] ?? 0;
         totalRevenue = (data['totalRevenue'] ?? 0).toDouble();
+        // totalOrders is NOT set here — we fetch it directly from /orders below
       }
     } catch (e) {
       debugPrint('Error fetching dashboard summary: $e');
     }
   }
 
-  // ✅ NEW: Fetch sales trend from backend
+  // ✅ Always fetch real order count directly from /api/orders
+  Future<void> _fetchOrderCount() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/orders'));
+      if (response.statusCode == 200) {
+        final List data = jsonDecode(response.body);
+        totalOrders = data.length;
+      }
+    } catch (e) {
+      debugPrint('Error fetching order count: $e');
+    }
+  }
+
   Future<void> _fetchSalesTrend() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/dashboard/sales-trend'),
-      );
-
+      final response = await http.get(Uri.parse('$baseUrl/dashboard/sales-trend'));
       if (response.statusCode == 200) {
         final List<dynamic> list = jsonDecode(response.body);
-        salesTrend = list
-            .map<double>((e) => (e['value'] as num).toDouble())
-            .toList();
+        salesTrend = list.map<double>((e) => (e['value'] as num).toDouble()).toList();
       }
     } catch (e) {
       debugPrint('Error fetching sales trend: $e');
@@ -127,13 +129,9 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  // ✅ NEW: Fetch user growth from backend
   Future<void> _fetchUserGrowth() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/dashboard/user-growth'),
-      );
-
+      final response = await http.get(Uri.parse('$baseUrl/dashboard/user-growth'));
       if (response.statusCode == 200) {
         final List list = jsonDecode(response.body);
         userGrowth = list.map((e) => e['count'] as int).toList();
@@ -144,13 +142,9 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  // ✅ NEW: Fetch top products from backend
   Future<void> _fetchTopProducts() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/dashboard/top-products'),
-      );
-
+      final response = await http.get(Uri.parse('$baseUrl/dashboard/top-products'));
       if (response.statusCode == 200) {
         final List list = jsonDecode(response.body);
         topProducts = list.map((e) => Product.fromJson(e)).toList();
@@ -161,16 +155,11 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  // ✅ NEW: Fetch category stats from backend
   Future<void> _fetchCategoryStats() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/dashboard/category-stats'),
-      );
-
+      final response = await http.get(Uri.parse('$baseUrl/dashboard/category-stats'));
       if (response.statusCode == 200) {
         final List list = jsonDecode(response.body);
-
         categoryStats = list.map((e) => {
           'label': e['categoryName'] ?? '',
           'value': (e['percentage'] ?? 0).toDouble(),
@@ -185,25 +174,15 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   Color _mapColor(String name) {
-    // Generate consistent colors based on category name
     final colors = [
-      Colors.blue,
-      Colors.pink,
-      Colors.purple,
-      Colors.orange,
-      Colors.green,
-      Colors.teal,
-      Colors.indigo,
-      Colors.red,
-      Colors.amber,
-      Colors.cyan,
+      Colors.blue, Colors.pink, Colors.purple, Colors.orange,
+      Colors.green, Colors.teal, Colors.indigo, Colors.red,
+      Colors.amber, Colors.cyan,
     ];
-
     final index = name.hashCode.abs() % colors.length;
     return colors[index];
   }
 
-  // ✅ Reload data when categories or products change
   Future<void> refreshData() async {
     await loadDashboardData();
   }

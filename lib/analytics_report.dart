@@ -829,14 +829,38 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> with TickerProviderSt
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       child: Row(
         children: [
+          // ✅ Back Button - sirf tab dikhega jab Navigator stack mein ho
+          if (Navigator.canPop(context))
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: InkWell(
+                onTap: () => Navigator.of(context).pop(),
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xFFE0E0E0),
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back_ios_new,
+                    size: 18,
+                    color: Color(0xFF212121),
+                  ),
+                ),
+              ),
+            ),
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Reports & Analytics', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF212121))),
-                SizedBox(height: 4),
-                Text('Track your business performance', style: TextStyle(color: Color(0xFF757575), fontSize: 14)),
-              ],
+    Text('Reports & Analytics', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF212121))),
+                  SizedBox(height: 4),
+                  Text('Track your business performance', style: TextStyle(color: Color(0xFF757575), fontSize: 14)),
+               ],
             ),
           ),
           _buildDateRangeDropdown(),

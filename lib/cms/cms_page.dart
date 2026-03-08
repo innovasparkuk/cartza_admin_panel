@@ -24,11 +24,6 @@ class _CmsPageState extends State<CmsPage> {
     final provider = context.watch<CmsProvider>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("CMS Pages"),
-        foregroundColor: Colors.white,
-        backgroundColor: const Color(0xFF4CAF50),
-      ),
       body: provider.isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(

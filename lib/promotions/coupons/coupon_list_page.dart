@@ -29,6 +29,7 @@ class _CouponListPageState extends State<CouponListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(t.coupons),
+        foregroundColor: Colors.white,
         backgroundColor:
         isDark ? theme.colorScheme.surface : const Color(0xFF4CAF50),
       ),

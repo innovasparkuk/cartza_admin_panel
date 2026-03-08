@@ -52,6 +52,7 @@ class _CreateBannerPageState extends State<CreateBannerPage> {
 
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
         title: Text(t.createBanner),
       ),
       body: SingleChildScrollView(

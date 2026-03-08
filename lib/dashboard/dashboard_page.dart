@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopease_admin/customer_management.dart';
 import 'package:shopease_admin/order_page.dart';
+import 'package:shopease_admin/payment.dart';
+import 'package:shopease_admin/review.dart';
 
 import 'dashboard_cards.dart';
 import 'dashboard_charts.dart';
@@ -267,11 +269,13 @@ class _DashboardPageState extends State<DashboardPage> {
         return const CategoriesPage();
       case 4:
         return const CustomerManagementDashboard();
+
       case 5:
-        return const NotificationsPage();
+        return TransactionPage();
       case 6:
         return PromotionsPage();
-
+      case 7:
+        return ReviewsPage();
       case 8:
         return CmsPage();
       case 9:

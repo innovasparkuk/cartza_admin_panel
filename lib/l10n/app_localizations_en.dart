@@ -9,6 +9,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get appTitle => 'ShopEase Admin';
+
+  @override
   String get search => 'Search';
 
   @override
@@ -187,7 +190,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get english => 'English';
 
   @override
-  String get urdu => 'اردو';
+  String get urdu => 'Urdu';
 
   @override
   String get switchAppAppearance => 'Switch app appearance';
@@ -558,4 +561,298 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get optimizeInventoryLevels => 'Optimize inventory levels';
+
+  @override
+  String get orderId => 'Order ID';
+
+  @override
+  String get customer => 'Customer';
+
+  @override
+  String get items => 'Items';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get orderAge => 'Order Age';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get viewDetails => 'View Details';
+
+  @override
+  String get changeStatus => 'Change Status';
+
+  @override
+  String get deleteOrder => 'Delete Order';
+
+  @override
+  String get orderDetails => 'Order Details';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get paymentMethod => 'Payment Method';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get totalItems => 'Total Items';
+
+  @override
+  String get products => 'Products';
+
+  @override
+  String get totalAmount => 'Total Amount';
+
+  @override
+  String get updateStatus => 'Update Status';
+
+  @override
+  String get areYouSureDeleteOrder => 'Are you sure you want to delete order';
+
+  @override
+  String get orderStatusUpdated => 'Order status updated to';
+
+  @override
+  String get orderDeleted => 'Order deleted successfully';
+
+  @override
+  String get errorLoadingOrders => 'Error loading orders';
+
+  @override
+  String get errorUpdatingStatus => 'Error updating status';
+
+  @override
+  String get errorDeletingOrder => 'Error deleting order';
+
+  @override
+  String get noOrdersFound => 'No orders found';
+
+  @override
+  String get searchOrdersByIdOrCustomer => 'Search orders by ID or customer...';
+
+  @override
+  String get customerManagement => 'Customer Management';
+
+  @override
+  String get totalCustomers => 'Total Customers';
+
+  @override
+  String get activeCustomers => 'Active';
+
+  @override
+  String get inactiveCustomers => 'Inactive';
+
+  @override
+  String get blockedCustomers => 'Blocked';
+
+  @override
+  String get searchCustomers => 'Search customers...';
+
+  @override
+  String get noCustomersFound => 'No customers found';
+
+  @override
+  String get customerDetails => 'Customer Details';
+
+  @override
+  String get joinDate => 'Join Date';
+
+  @override
+  String get customerAge => 'Customer Age';
+
+  @override
+  String get lastActive => 'Last Active';
+
+  @override
+  String get customerTimeline => 'Customer Timeline';
+
+  @override
+  String get joined => 'Joined';
+
+  @override
+  String get ordersPlaced => 'orders placed';
+
+  @override
+  String get unblockCustomer => 'Unblock Customer';
+
+  @override
+  String get blockCustomer => 'Block Customer';
+
+  @override
+  String get sendPromotion => 'Send Promotion';
+
+  @override
+  String get promotionSent => 'Promotion sent to';
+
+  @override
+  String get customerBlocked => 'Customer blocked successfully';
+
+  @override
+  String get customerUnblocked => 'Customer unblocked successfully';
+
+  @override
+  String get errorLoadingCustomers => 'Error loading customers';
+
+  @override
+  String get sendPromotionalEmail => 'Send promotional email to';
+
+  @override
+  String get areYouSure => 'Are you sure?';
+
+  @override
+  String get confirmBlock => 'Confirm Block';
+
+  @override
+  String get confirmUnblock => 'Confirm Unblock';
+
+  @override
+  String get productManagement => 'Product Management';
+
+  @override
+  String get stockManagement => 'Stock Management';
+
+  @override
+  String get searchProducts => 'Search products';
+
+  @override
+  String get noProductsFound => 'No products found';
+
+  @override
+  String get image => 'Image';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get stock => 'Stock';
+
+  @override
+  String get actions => 'Actions';
+
+  @override
+  String get noDescription => 'No description';
+
+  @override
+  String get deleteProduct => 'Delete Product';
+
+  @override
+  String get deleteProductConfirmation => 'Delete';
+
+  @override
+  String get productDeleted => 'Product deleted';
+
+  @override
+  String get productUpdated => 'Product updated';
+
+  @override
+  String get productAdded => 'Product added';
+
+  @override
+  String get bulkUpload => 'Bulk upload';
+
+  @override
+  String get csvUploadComingSoon => 'CSV upload coming soon';
+
+  @override
+  String get categoryManagement => 'Category Management';
+
+  @override
+  String get manageProductCategories => 'Manage your product categories';
+
+  @override
+  String get totalCategories => 'Total Categories';
+
+  @override
+  String get totalProducts => 'Total Products';
+
+  @override
+  String get allCategories => 'All Categories';
+
+  @override
+  String get addNewCategory => 'Add New Category';
+
+  @override
+  String get categoryName => 'Category Name';
+
+  @override
+  String get subcategoryName => 'Subcategory Name';
+
+  @override
+  String get productCount => 'Product Count';
+
+  @override
+  String get imageSource => 'Image Source';
+
+  @override
+  String get url => 'URL';
+
+  @override
+  String get system => 'System';
+
+  @override
+  String get imageUrl => 'Image URL';
+
+  @override
+  String get assetsFolder => 'Assets Folder';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get selectImageFromAssets => 'Select Image from Assets';
+
+  @override
+  String get enter => 'Enter';
+
+  @override
+  String get pleaseEnter => 'Please enter';
+
+  @override
+  String get validNumber => 'Please enter a valid number';
+
+  @override
+  String get addSubcategory => 'Add Subcategory';
+
+  @override
+  String get confirmDelete => 'Confirm?';
+
+  @override
+  String get sub => 'Sub';
+
+  @override
+  String get imageUploaded => 'Image uploaded successfully';
+
+  @override
+  String get imageUploadFailed => 'Image upload failed';
+
+  @override
+  String get categoryUpdated => 'Category updated!';
+
+  @override
+  String get categoryAdded => 'Category added!';
+
+  @override
+  String get subcategoryAdded => 'Subcategory added successfully!';
+
+  @override
+  String get categoryDeleted => 'Category deleted successfully!';
+
+  @override
+  String get pleaseEnterSubcategoryName => 'Please enter subcategory name';
 }
